@@ -2,16 +2,36 @@
   <div id='map-draw'>
     <mdl-snackbar display-on="mailSent"></mdl-snackbar>
     <div id="tool_panel">
-      <button class="tools" title="添加图标" @click="showLabelPanel" style="margin-left:5px;">图标</button>
-      <button class="tools" title="添加文字" @click="drawTextStart">文本</button>
-      <button class="tools" title="添加线条" @click="showLinePanel">线条</button>
-      <button class="tools" title="添加形状" @click="showPolygonPanel">形状</button>
-      <button class="tools" title="删除选中要素" @click="deleteSelected">删除</button>
-      <button class="tools" title="删除所有要素" @click="deleteAll">清除</button>
-      <button class="tools" title="移动" @click="setSelectMode">编辑要素</button>
-      <button class="tools" title="更该样式" @click="setStaticMode">更改样式</button>
-      <button class="tools" title="显示/隐藏" @click="showShapes" style="margin-right:5px;">显示/隐藏</button>
+      <div class="boxopt box_label" @click="showLabelPanel">
+        <span></span>          
+        <i>图标</i>
+        <em></em>
+      </div>
+      <b></b>
+      <div class="boxopt box_text" @click="drawTextStart">
+        <span></span>          
+        <i>文字</i> 
+      </div>
+      <b></b>
+      <div class="boxopt box_line" @click="showLinePanel">
+        <span></span>          
+        <i>线型</i>
+        <em></em>
+      </div>
+      <b></b>
+      <div class="boxopt box_polygon" @click="showPolygonPanel">
+        <span></span>          
+        <i>形状</i>
+        <em></em>
+      </div>
+      <b></b>
+      <div class="boxopt box_tool" @click="showToolPanel">
+        <span></span>        
+        <i>操作</i>
+        <em></em>   
+      </div>
     </div>
+
     <div id="icon-select-toolbar" class="panel">
       <div class="icon-select" >
         <a v-for="icon in spriteObj.icons" class="icon-link" title="{{icon.name}}" @click="drawIconStart($event)">
@@ -20,19 +40,60 @@
         </a>
       </div>
     </div>
+
+    <!--操作面板-->
+    <div id="detail-box" class="panel marker_panel">
+      <ul class="boxinfo">
+        <li title="删除选中要素" @click="deleteSelected">
+          <i>删除</i>
+        </li>
+        <li title="删除所有要素" @click="deleteAll">
+          <i>清除</i>
+        </li>
+        <li title="移动" @click="setSelectMode">
+          <i>编辑要素</i>
+        </li>
+        <li title="更该样式" @click="setStaticMode">
+          <i>更改样式</i>
+        </li>
+        <li title="显示/隐藏" @click="showShapes">
+          <i>显示/隐藏</i>
+        </li>
+      </ul>
+    </div>
     
     <!--以下定义添加标记面板-->
     <div id = "fill_marker_panel" class="panel marker_panel">
-      <button class="marker" id="triangle-marker" title="添加三角形" @click="drawTriangle" style="margin-left:5px;">三角形</button>
-      <button class="marker" id="rect-marker" title="添加矩形" @click="drawRect">矩形</button>
-      <button class="marker" id="circle-marker" title="添加圆" @click="drawCircle">圆</button>
-      <button class="marker" id="arrow-marker" title="添加箭头" @click="drawArrow">箭头</button>
-      <button class="marker" id="polygon-marker" title="添加任意多边形" @click="drawPolygonStart" style="margin-right:5px;">多边形</button>
+      <ul class="boxinfo">
+        <li id="triangle-marker" title="添加三角形" @click="drawTriangle">
+          <i>三角形</i>
+        </li>
+        <li id="rect-marker" title="添加矩形" @click="drawRect">
+          <i>矩形</i>
+        </li>
+        <li id="circle-marker" title="添加圆" @click="drawCircle">
+          <i>圆</i>
+        </li>
+        <li id="arrow-marker" title="添加箭头" @click="drawArrow">
+          <i>箭头</i>
+        </li>
+        <li id="polygon-marker" title="添加任意多边形" @click="drawPolygonStart">
+          <i>多边形</i>
+        </li>
+      </ul>
     </div>
     <div id = "line_marker_panel" class="panel marker_panel">
-      <button class="marker" id="line-marker" title="添加折线" @click="drawLineStart" style="margin-left:5px;">折线</button>
-      <button class="marker" id="arcmarker" title="添加弧线" @click="drawArc">弧形</button>
-      <button class="marker" id="bezier-marker" title="添加曲线" @click="drawBezier">Bezier曲线</button>
+      <ul class="boxinfo">
+        <li id="line-marker" title="添加折线" @click="drawLineStart">
+          <i>折线</i>
+        </li>
+        <li id="arcmarker" title="添加弧线" @click="drawArc">
+          <i>弧形</i>
+        </li>
+        <li id="bezier-marker" title="添加曲线" @click="drawBezier">
+          <i>Bezier曲线</i>
+        </li>
+      </ul>
     </div>
     <div id="icon-set" class="set">
       <div class="icon-select" id="icon-select-map">
@@ -91,36 +152,42 @@ export default {
       this.draw.changeMode("draw_triangle");
       this.map.on("draw.create",this.drawPolygonEnd);
       $(".panel").css("display","none");
+      this.initToolPanel();
     },
     drawRect:function(){
       this.currentMode = "draw_rectangle";
       this.draw.changeMode("draw_rectangle");
       this.map.on("draw.create",this.drawPolygonEnd);
       $(".panel").css("display","none");
+      this.initToolPanel();
     },
     drawCircle:function(){
       this.currentMode = "draw_circle";
       this.draw.changeMode("draw_circle");
       this.map.on("draw.create",this.drawPolygonEnd);
       $(".panel").css("display","none");
+      this.initToolPanel();
     },
     drawArrow:function(){
       this.currentMode = "draw_arrow";
       this.draw.changeMode("draw_arrow");
       this.map.on("draw.create",this.drawPolygonEnd);
       $(".panel").css("display","none");
+      this.initToolPanel();
     },
     drawArc:function(){
       this.currentMode = "draw_arc";
       this.draw.changeMode("draw_arc");
       this.map.on("draw.create",this.drawLineEnd);
       $(".panel").css("display","none");
+      this.initToolPanel();
     },
     drawBezier:function(){
       this.currentMode = "draw_bezier";
       this.draw.changeMode("draw_bezier");
       this.map.on("draw.create",this.drawLineEnd);
       $(".panel").css("display","none");
+      this.initToolPanel();
     },
     iconChange:function(e){
       var name = e.target.title;
@@ -202,6 +269,8 @@ export default {
           }
         }
       }
+      $(".panel").css("display","none");
+      this.initToolPanel();
     },
     setSelectMode:function(){
       if(this.popup.remove){
@@ -209,17 +278,37 @@ export default {
       }
       this.draw.changeMode("simple_select");
       this.currentMode = "simple_select";
+      $(".panel").css("display","none");
+      this.initToolPanel();
     },
     setStaticMode:function(){
       this.draw.changeMode("static");
       this.currentMode = "static";
+      $(".panel").css("display","none");
+      this.initToolPanel();
+    },
+    showToolPanel:function(){
+      this.initToolPanel();
+      if($("#detail-box").is(":visible")){
+        $("#detail-box").css("display","none");
+      }else{
+        $(".panel").hide();
+        $("#detail-box").css("display","block");
+        $(".box_tool span").addClass("active");
+        $(".box_tool i").addClass("active");
+        $(".box_tool em").addClass("active");
+      }
     },
     showLabelPanel:function(){
+      this.initToolPanel();
       if($("#icon-select-toolbar").is(":visible")){
         $("#icon-select-toolbar").css("display","none");
       }else{
         $(".panel").hide();
         $("#icon-select-toolbar").css("display","flex");
+        $(".box_label span").addClass("active");
+        $(".box_label i").addClass("active");
+        $(".box_label em").addClass("active");
       }
     },
     drawIconStart:function(e){
@@ -228,6 +317,7 @@ export default {
       this.draw.changeMode("draw_point");
       this.map.on("draw.create",this.drawIconEnd);
       $("#icon-select-toolbar").css("display","none");
+      this.initToolPanel();
     },
     drawIconEnd:function(e){
       var iconName = this.drawIconName;
@@ -267,10 +357,12 @@ export default {
       this.map.off("draw.create",this.drawIconEnd);
     },
     drawTextStart:function(){
+      this.initToolPanel();
       this.currentMode = "draw_text";
       this.draw.changeMode("draw_point");
       this.map.on("draw.create",this.drawTextEnd);
       $(".panel").css("display","none");
+      this.initToolPanel();
     },
     drawTextEnd:function(e){
       var id = e.features[0].id;
@@ -320,6 +412,7 @@ export default {
       this.draw.changeMode("draw_line_string");
       this.map.on("draw.create",this.drawLineEnd);
       $(".panel").css("display","none");
+      this.initToolPanel();
     },
     drawLineEnd:function(e){
       var id = e.features[0].id;
@@ -365,6 +458,7 @@ export default {
       this.draw.changeMode("draw_polygon");
       this.map.on("draw.create",this.drawPolygonEnd);
       $(".panel").css("display","none");
+      this.initToolPanel();
     },
     drawPolygonEnd:function(e){
       var id = e.features[0].id;
@@ -436,35 +530,54 @@ export default {
         return;
       }
       this.draw.delete(ids);
+      $(".panel").css("display","none");
+      this.initToolPanel();
     },
     deleteAll:function(){
       this.draw.deleteAll();
+      $(".panel").css("display","none");
+      this.initToolPanel();
     },
     showLinePanel:function(){
+      this.initToolPanel();
       if($("#line_marker_panel").is(":visible")){
         $("#linemarker_panel").css("display","none");
       }else{
         $(".panel").hide();
         $("#line_marker_panel").css("display","block");
+        $(".box_line span").addClass("active");
+        $(".box_line i").addClass("active");
+        $(".box_line em").addClass("active");
       }
     },
-    showPolygonPanel:function(){ 
+    showPolygonPanel:function(){
+      this.initToolPanel();
       if($("#fill_marker_panel").is(":visible")){
         $("#fill_marker_panel").css("display","none");
       }else{
         $(".panel").hide();
         $("#fill_marker_panel").css("display","block");
+        $(".box_polygon span").addClass("active");
+        $(".box_polygon i").addClass("active");
+        $(".box_polygon em").addClass("active");
       }
-    }
+    },
+    initToolPanel:function(){
+      $(".boxopt span").removeClass("active");
+      $(".boxopt i").removeClass("active");
+      $(".boxopt em").removeClass("active");
+    },
   },
    events: {
+    'init-tool':function(){
+      this.initToolPanel();
+    },
     'map-click': function(options){
       var e = options.event;
       var feature = options.features[0];
       var featureId = feature.properties.id;
       var dom;
       var featureIds = this.draw.getFeatureIdsAt(e.point);
-      console.log(featureIds)
       if(feature.geometry.type==="Polygon"){
         dom = $("#polygon-set").clone();
         dom.css("display","block");
@@ -545,28 +658,139 @@ export default {
 .marker_panel{
   position: absolute;
   display: none;
-  top:45px;
+  top: 45px;
   z-index: 1000;
   background-color: white;
   border-radius: 4px;
 }
 #fill_marker_panel{
-  right: 527px;
-  width: 257px;
+  right: 140px;
+  width: 80px;
 }
 #line_marker_panel{
-  right: 577px;
-  width: 187px;
+  right: 225px;
+  width: 80px;
+}
+#detail-box{
+  width: 80px;
+  right: 56px;
 }
 #tool_panel{
+  z-index: 4;
   position: absolute;
-  top:10px;
-  right: calc(50% - 259px);
-  z-index: 1000;
-  width: 518px;
-  background-color: white;
-  border-radius: 4px;
+  top: 10px;
+  right: 50px;
+  float: right;
+  margin-right: 6px;
+  box-shadow: 1px 2px 1px rgba(0,0,0,.15);
+  height: 34px;
+  background: #fff;
+  border-radius: 2px;
 }
+#tool_panel b{
+  float: left;
+  height: 21px;
+  display: inline-block;
+  border-right: 1px solid #eee;
+  top: 7px;
+  position: relative;
+}
+/******工具样式*****/
+.boxopt {
+  padding-right: 12px;
+  line-height: 34px;
+  float: left;
+  cursor: pointer;
+  display: inline-block;
+}
+.boxopt span{
+  float: left;
+  height: 34px;
+  width: 29px;
+  background-repeat: no-repeat;
+  padding-right: 7px;
+  
+}
+.boxopt i{
+  float: left;
+  font-size: 12px;
+  font-style: normal;
+  height: 34px;
+  line-height: 34px;
+  display: inline-block;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.boxopt i.active{
+  color: #579AFC;
+}
+.boxopt em{
+  width: 7px;
+  height: 7px;
+  float: left;
+  margin-top: 13px;
+  margin-left: 5px;
+  background-image: url('../../../static/icons/newtools.png');
+  background-repeat: no-repeat;
+  background-position: -13px -17px;
+}
+.boxopt em.active {
+  background-position: -12px -177px;
+}
+ul.boxinfo{
+  list-style-type: none;
+}
+ul.boxinfo li{
+  box-sizing: border-box;
+  width: 100%;
+  cursor: pointer;
+  height: 34px;
+  line-height: 34px;
+  padding-left: 7px;
+}
+ul.boxinfo li:hover{
+  color: #579AFC;
+}
+ul.boxinfo li i{
+  float: left;
+  font-size: 12px;
+  font-style: normal;
+  height: 34px;
+  line-height: 34px;
+  display: inline-block;
+  margin-left: 2px
+}
+.box_tool span{
+  background-image: url('../../../static/icons/newtools.png');
+  background-position: -34px -116px;
+}
+.box_tool span.active{
+  background-color: #fff;
+  background-position: -34px -48px;
+}
+.box_label span{
+  background-image: url('../../../static/icons/newtools.png');
+  background-position: -80px -168px;
+}
+.box_label span.active{
+  background-color: #fff;
+  background-position: -40px -168px;
+}
+.box_text span{
+  background-image: url('../../../static/icons/pencil.svg');
+  background-position: center;
+}
+.box_line span{
+  background-image: url('../../../static/icons/line.svg');
+  background-position: center;
+}
+.box_polygon span{
+  background-image: url("../../../static/icons/polygon.svg");
+  background-position: center;
+}
+/***********************/
 .visibility{
   background-color: white;
 }
@@ -599,7 +823,7 @@ export default {
   height: 220px;
   z-index: 1;
   width: 205px;
-  left: calc(50% - 259px);
+  right: 262px;
   top: 45px;
   background-color: white;
 }
@@ -622,7 +846,22 @@ export default {
 .icon-select a:hover{
   background-color: gray;
 }
-.tools,.marker{
-  margin:5px 2px 5px 0;
+
+.icon-select::-webkit-scrollbar {
+  width: 6px;
+}
+
+.icon-select::-webkit-scrollbar:horizontal {
+  height: 6px;
+}
+
+/* 滚动条的滑轨背景颜色 */
+.icon-select::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+}
+
+/* 滑块颜色 */
+.icon-select::-webkit-scrollbar-thumb {
+  background-color: #579AFC;
 }
 </style>

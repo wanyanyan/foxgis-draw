@@ -52,6 +52,7 @@ export default {
   methods: {
     // 地图点击 弹出info
     mapClick: function(e){
+      this.$broadcast("init-tool");
       var currMode = this.draw.getMode();
       if(currMode.indexOf("draw")!==-1){return};
       let features = this.map.queryRenderedFeatures(e.point);
