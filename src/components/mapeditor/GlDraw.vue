@@ -569,6 +569,9 @@ export default {
     },
   },
    events: {
+    'init-tool':function(){
+      this.initToolPanel();
+    },
     'map-click': function(options){
       var e = options.event;
       var feature = options.features[0];
