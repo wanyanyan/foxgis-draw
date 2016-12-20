@@ -276,7 +276,6 @@ export default {
       map.addControl(new mapboxgl.Navigation({position: 'top-right'}))
       map.addControl(new mapboxgl.Scale({position: 'bottom-left'}));
       let draw = Draw({
-        keybindings:false,
         styles: this.glDrawStyle,
       });
       map.addControl(draw);
@@ -549,7 +548,7 @@ export default {
         "paint":{
           "line-color":"#ff0000",
           "line-dasharray":[0.2,2],
-          "line-width":1
+          "line-width":2
         },
         "interactive":true
       },
@@ -570,7 +569,7 @@ export default {
       {
         "id":"gl-draw-line-active",
         "type":"line",
-        "filter":["all",["==","$type","LineString"],["==","active","true"]],
+        "filter":["all",["==","$type","LineString"],["==","active","true"],["==","meta","feature"]],
         "layout":{
           "line-cap":"round",
           "line-join":"round"
@@ -578,7 +577,7 @@ export default {
         "paint":{
           "line-color":"#ff0000",
           "line-dasharray":[0.2,2],
-          "line-width":1
+          "line-width":2
           },
           "interactive":true
         },
@@ -641,6 +640,53 @@ export default {
             
           },
           "interactive":true
+        },
+        {
+          'id': 'gl-draw-control-point-stroke',
+          'type': 'circle',
+          'filter': ['all',
+            ['==', 'meta', 'control'],
+            ['==', '$type', 'Point'],
+            ['!=', 'mode', 'static']
+          ],
+          'paint': {
+            'circle-radius': 5,
+            'circle-color': '#fff'
+          },
+          'interactive': true
+        },
+        {
+          'id': 'gl-draw-control-point',
+          'type': 'circle',
+          'filter': ['all',
+            ['==', 'meta', 'control'],
+            ['==', '$type', 'Point'],
+            ['!=', 'mode', 'static']
+          ],
+          'paint': {
+            'circle-radius': 3,
+            'circle-color': '#fbb03b'
+          },
+          'interactive': true
+        },
+        {
+          'id': 'gl-draw-control-line',
+          'type': 'line',
+          'filter': ['all',
+            ['==', '$type', 'LineString'],
+            ['==', 'meta', 'control'],
+            ['!=', 'mode', 'static']
+          ],
+          'layout': {
+            'line-cap': 'round',
+            'line-join': 'round'
+          },
+          'paint': {
+            'line-color': '#fbb03b',
+            'line-dasharray': [0.2, 2],
+            'line-width': 2
+          },
+          'interactive': true
         }]
     }
   },
