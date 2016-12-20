@@ -409,7 +409,7 @@ export default {
     },
     getSystemSources:function(){
       var access_token = Cookies.get('access_token');
-      var systemSourceIds = ["admin2","ngcc_terrain_v2"];//暂时不加admin
+      var systemSourceIds = ["admin2","gw_admin"];//暂时不加admin
       for(let i = 0;i<systemSourceIds.length;i++){
         var url = SERVER_API.tilesets+"/geoway/"+systemSourceIds[i];
         this.getSource(systemSourceIds[i],url);
