@@ -288,11 +288,12 @@ export default {
       this.initToolPanel();
     },
     showToolPanel:function(){
-      this.initToolPanel();
-      if($("#detail-box").is(":visible")){
+      if($(".box_tool i").attr("class") === 'active'){
         $("#detail-box").css("display","none");
+        this.initToolPanel();
       }else{
         $(".panel").hide();
+        this.initToolPanel();
         $("#detail-box").css("display","block");
         $(".box_tool span").addClass("active");
         $(".box_tool i").addClass("active");
@@ -300,11 +301,12 @@ export default {
       }
     },
     showLabelPanel:function(){
-      this.initToolPanel();
-      if($("#icon-select-toolbar").is(":visible")){
+      if($(".box_label i").attr("class") === 'active'){
         $("#icon-select-toolbar").css("display","none");
+        this.initToolPanel();
       }else{
         $(".panel").hide();
+        this.initToolPanel();
         $("#icon-select-toolbar").css("display","flex");
         $(".box_label span").addClass("active");
         $(".box_label i").addClass("active");
@@ -539,11 +541,12 @@ export default {
       this.initToolPanel();
     },
     showLinePanel:function(){
-      this.initToolPanel();
-      if($("#line_marker_panel").is(":visible")){
+      if($(".box_line i").attr("class") === 'active'){
         $("#linemarker_panel").css("display","none");
+        this.initToolPanel();
       }else{
         $(".panel").hide();
+        this.initToolPanel();
         $("#line_marker_panel").css("display","block");
         $(".box_line span").addClass("active");
         $(".box_line i").addClass("active");
@@ -551,11 +554,12 @@ export default {
       }
     },
     showPolygonPanel:function(){
-      this.initToolPanel();
-      if($("#fill_marker_panel").is(":visible")){
+      if($(".box_polygon i").attr("class") === 'active'){
         $("#fill_marker_panel").css("display","none");
+        this.initToolPanel();
       }else{
         $(".panel").hide();
+        this.initToolPanel();
         $("#fill_marker_panel").css("display","block");
         $(".box_polygon span").addClass("active");
         $(".box_polygon i").addClass("active");
