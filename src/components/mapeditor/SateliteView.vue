@@ -50,12 +50,33 @@ export default {
     }
   },
   methods: {
+    singleClick:function(e){
+      clearTimeout(this.isdblClick);
+      this.isdblClick = setTimeout(this.mapClick(e),1000);
+    },
+    doubleClick:function(e){
+      this.$broadcast("set-static-mode");
+      this.features = this.map.queryRenderedFeatures(e.point);
+      for(let i=0;i<this.features.length;i++){
+        if(this.features[i].properties.meta==="feature"&&this.features[i].properties.mode){
+          this.features[i].properties.mode="static";
+        }
+      }
+      clearTimeout(this.isdblClick);
+      this.mapClick(e);
+      this.$broadcast("set-select-mode");
+      for(let i=0;i<this.features.length;i++){
+        if(this.features[i].properties.meta==="feature"&&this.features[i].properties.mode){
+          this.features[i].properties.mode="simple_select";
+        }
+      }
+    },
     // 地图点击 弹出info
     mapClick: function(e){
       this.$broadcast("init-tool");
       var currMode = this.draw.getMode();
       if(currMode.indexOf("draw")!==-1){return};
-      let features = this.map.queryRenderedFeatures(e.point);
+      let features = this.features;
       var drawFeatures = [],mapFeatures=[];
       for(let i=0;i<features.length;i++){
         if(features[i].properties.meta==="feature"&&features[i].properties.mode!=="static"){
@@ -259,7 +280,7 @@ export default {
     hideBoundsBox: function(){
       this.map.off('dragstart', this.mapDragStart)
       //this.map.off('zoomend',this.mapZoomEnd)
-      this.map.on('click', this.mapClick)
+      this.map.on('click', this.singleClick)
       var box = this.$el.querySelector("#location-control")
       box.style.display = 'none'
     },
@@ -282,7 +303,8 @@ export default {
       map.addControl(draw);
       this.draw = draw;
       this.map = map;
-      map.on('click', this.mapClick);
+      map.on('click', this.singleClick);
+      map.on('dblclick', this.doubleClick);
       map.on('drag', this.mapDrag);
       map.on('dragend', this.mapDragEnd);
       map.on('zoomend',this.mapZoomEnd);
@@ -395,7 +417,7 @@ export default {
       this.map.on('dragstart', this.mapDragStart)
       this.map.on('zoomend',this.mapZoomEnd)
 
-      this.map.off('click', this.mapClick)
+      this.map.off('click', this.singleClick)
       let infoContainer = document.getElementById('info-container')
       infoContainer.style.display = 'none'
     },
@@ -471,6 +493,8 @@ export default {
   },
   data: function(){
     return {
+      isdblClick: null,
+      features: [],
       map: {},
       popup:{},
       localStyle: {},
