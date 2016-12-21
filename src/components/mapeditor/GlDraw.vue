@@ -273,9 +273,9 @@ export default {
       this.initToolPanel();
     },
     setSelectMode:function(){
-      if(this.popup.remove){
+      /*if(this.popup.remove){
         this.popup.remove();
-      }
+      }*/
       this.draw.changeMode("simple_select");
       this.currentMode = "simple_select";
       $(".panel").css("display","none");
@@ -575,6 +575,12 @@ export default {
    events: {
     'init-tool':function(){
       this.initToolPanel();
+    },
+    'set-static-mode':function(){
+      this.setStaticMode();
+    },
+    'set-select-mode':function(){
+      this.setSelectMode();
     },
     'map-click': function(options){
       var e = options.event;
