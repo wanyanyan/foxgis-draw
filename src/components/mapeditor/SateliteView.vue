@@ -51,6 +51,7 @@ export default {
   },
   methods: {
     singleClick:function(e){
+      this.map.scrollZoom.enable();
       clearTimeout(this.isdblClick);
       this.isdblClick = setTimeout(this.mapClick(e),1000);
     },
@@ -90,6 +91,7 @@ export default {
       }
       let $infoContainer = $('#info-container');
       if(drawFeatures.length===0){//点击的不是绘制的元素
+        this.map.scrollZoom.enable();
         if(this.popup.remove){
           this.popup = {};
           return;
@@ -106,6 +108,7 @@ export default {
         }
         this.queryFeatures = mapFeatures
       }else{
+        this.map.scrollZoom.disable();
         if($infoContainer.is(":visible")){
           $infoContainer.hide();
         }
