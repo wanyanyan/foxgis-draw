@@ -613,6 +613,7 @@ export default {
         .addTo(this.map);
       this.popup = popup;
       this.$dispatch("show-popup",popup);
+      this.map.scrollZoom.enable();
     }
   },
   props: ['map','draw'],
