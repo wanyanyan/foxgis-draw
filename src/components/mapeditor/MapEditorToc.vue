@@ -228,9 +228,12 @@
             <div class="text"><span>绘图属性</span></div>
             <div v-for="(name,value) in curPanelLayer.paint" class="property-item">
               <div class="property-name"><span>{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
-              <div class="property-value" v-if="name!=='fill-antialias'&&name!=='fill-translate-anchor'&&name!=='fill-opacity'">
-                <input class="color" type="text" v-model="value" v-if="name.indexOf('color')!=-1" v-on:change='propertyChange' v-on:click="colorPickerClick" name="{{name}}" data-type='paint' :style = "'background-color:'+value" lazy/>
+              <div class="property-value" v-if="name!=='fill-antialias'&&name!=='fill-translate-anchor'&&name!=='fill-opacity'&&name!=='fill-color'">
+                <input type="text" :value="value" name="{{name}}" v-if="name==='fill-pattern'" v-on:change='propertyChange' v-on:click='onShowIconPanel' data-type='paint'/>
                 <input type="text" :value="value" v-else v-on:change='propertyChange' name="{{name}}" data-type='paint' />
+              </div>
+              <div class="property-value" v-if="name=='fill-color'">
+                <input class="color" type="text" v-model="value" v-on:change='propertyChange' v-on:click="colorPickerClick" name="{{name}}" data-type='paint' :style = "'background-color:'+value" lazy/>
               </div>
               <!-- 透明度-->
               <div class="property-value" v-if="name=='fill-opacity'" style="padding-top:7px;">
@@ -268,9 +271,12 @@
             <div class="text"><span>绘图属性</span></div>
             <div v-for="(name,value) in curPanelLayer.paint" class="property-item">
               <div class="property-name"><span >{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
-              <div class="property-value" v-if="name!=='line-translate-anchor'&&name!=='line-opacity'">
-                <input class="color" type="text" v-model="value" v-if="name.indexOf('color')!=-1" v-on:change='propertyChange' v-on:click="colorPickerClick" name="{{name}}" data-type='paint' :style = "'background-color:'+value" lazy/>
+              <div class="property-value" v-if="name!=='line-translate-anchor'&&name!=='line-opacity'&&name!=='line-color'">
+                <input type="text" :value="value" name="{{name}}" v-if="name==='line-pattern'" v-on:change='propertyChange' v-on:click='onShowIconPanel' data-type='paint'/>
                 <input type="text" :value="value" v-else v-on:change='propertyChange' name="{{name}}" data-type='paint' />
+              </div>
+              <div class="property-value" v-if="name=='line-color'">
+                <input class="color" type="text" v-model="value" v-on:change='propertyChange' v-on:click="colorPickerClick" name="{{name}}" data-type='paint' :style = "'background-color:'+value" lazy/>
               </div>
               <!-- 透明度-->
               <div class="property-value" v-if="name=='line-opacity'" style="padding-top:7px;">
@@ -457,7 +463,7 @@ export default {
       var that = this;
       $(e.target).colpick({
         submit:false,
-        layout:'hex',
+        layout:'rgbhex',
         color:color,
         onChange:function(hsb,hex,rgb,el){
           $(el).css('background-color','#'+hex);
@@ -1781,6 +1787,7 @@ export default {
         'text-halo-color': '字体光晕颜色',
         'text-halo-width': '字体光晕宽度',
         'text-halo-blur': '光晕模糊度',
+        'pattern': '图案填充',
         'contrast': '对比度',
         'hue-rotate': '色相旋转',
         'brightness-min': '最小亮度',
@@ -1869,7 +1876,8 @@ export default {
             'fill-outline-color': '#000000',
             'fill-antialias': true,
             'fill-translate': [0,0],
-            'fill-translate-anchor': 'map'
+            'fill-translate-anchor': 'map',
+            'fill-pattern': ''
           },
           'layout': {
             'visibility': 'visible'
@@ -1885,7 +1893,8 @@ export default {
             'line-gap-width': 0,
             'line-offset': 0,
             'line-blur': 0,
-            'line-dasharray': [1,0]
+            'line-dasharray': [1,0],
+            'line-pattern': ''
           },
           'layout': {
             'visibility': 'visible',
@@ -2440,7 +2449,7 @@ a {
 }
 #icon-select-panel,#font-select-panel{
   width: 300px;
-  height: 400px;
+  max-height: 400px;
   position: absolute;
   left: 555px;
   top: 150px;
@@ -2475,7 +2484,7 @@ a {
   overflow: auto;
   margin: 10px;
   padding: 5px;
-  height: calc(100% - 60px);
+  max-height: 340px;
   background-color: #f5f5f5;
   scrollbar-track-color:#f5f5f5;
   scrollbar-face-color:#dcdcdc;

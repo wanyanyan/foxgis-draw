@@ -262,8 +262,7 @@ export default {
 #icon-select-panel .icon-container{
   margin: 10px;
   padding: 5px;
-  height: calc(100% - 60px);
-  max-height: initial;
+  max-height: 340px;
   background-color: whitesmoke;
 }
 </style>
