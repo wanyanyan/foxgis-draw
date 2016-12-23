@@ -195,12 +195,14 @@ export default {
         var map = this.$refs.drafmap.map;
         var zoom = map.getZoom();
         var center = map.getCenter();
+        var bearing = map.getBearing();
+        var pitch = map.getPitch();
         var controlBound = this.$refs.drafmap.controlBound;
         var nw = map.project(controlBound.nw);
         var se = map.project(controlBound.se);
         var width = parseInt(se.x-nw.x);
         var height = parseInt(se.y-nw.y);
-        this.printAction({status:'ok',zoom:zoom,center:center,width:width,height:height})
+        this.printAction({status:'ok',zoom:zoom,center:center,width:width,height:height,bearing:bearing,pitch:pitch})
         /*this.dialogcontent.title="输出级别";
         this.dialogcontent.type="zoom";
         var currZoom = parseInt(this.$refs.drafmap.map.getZoom());
@@ -228,6 +230,8 @@ export default {
         center:params.center,
         width:params.width,
         height:params.height,
+        bearing:params.bearing,
+        pitch:params.pitch,
         scale:1,
         selectedDistrict:this.selectedDistrict,
         templateName:this.style.metadata?(this.style.metadata.template?this.style.metadata.template.type||"地图":"地图"):"地图",

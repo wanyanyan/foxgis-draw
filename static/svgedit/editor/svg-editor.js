@@ -4657,6 +4657,8 @@ TODOS
 		        container: container,
 		        center: options.center,
 		        zoom: options.zoom,
+		        bearing:options.bearing,
+		        pitch:options.pitch,
 		        style: style,
 		        interactive: false,
 		        attributionControl: false

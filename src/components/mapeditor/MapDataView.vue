@@ -76,7 +76,7 @@ export default {
         style: style,
         attributionControl: false
       });
-      map.addControl(new mapboxgl.Navigation());
+      map.addControl(new mapboxgl.NavigationControl());
       this.map = map;
       map.on('click', this.mapClick);
       map.on('drag', this.mapDrag);

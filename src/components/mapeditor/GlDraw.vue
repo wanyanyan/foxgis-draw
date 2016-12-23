@@ -133,8 +133,6 @@
 
 
 <script>
-//import Draw from 'gl-draw-foxgis'
-import Draw from 'gl-draw-foxgis'
 import Cookies from 'js-cookie'
 import { changeStyle } from '../../vuex/actions'
 export default {

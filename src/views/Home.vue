@@ -279,7 +279,7 @@ export default {
               style: initStyle,
               attributionControl: false
             });
-            map.addControl(new mapboxgl.Navigation());
+            map.addControl(new mapboxgl.NavigationControl());
             this.terrainMap = map;
           },function(){
             this.$broadcast('mailSent', { message: '样式信息错误！',timeout:3000 });
@@ -298,7 +298,7 @@ export default {
               style: initStyle,
               attributionControl: false
             });
-            map.addControl(new mapboxgl.Navigation());
+            map.addControl(new mapboxgl.NavigationControl());
             this.defaultMap = map;
           },function(){
             this.$broadcast('mailSent', { message: '样式信息错误！',timeout:3000 });
@@ -381,7 +381,7 @@ export default {
         style: initStyle,
         attributionControl: false
       });
-      map.addControl(new mapboxgl.Navigation());
+      map.addControl(new mapboxgl.NavigationControl());
       this.adminMap = map;
     },function(){
       this.$broadcast('mailSent', { message: '样式信息错误！',timeout:3000 });

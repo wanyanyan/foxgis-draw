@@ -73,7 +73,7 @@
 <script>
 /*import mapboxgl from 'mapbox-gl'*/
 import { diff, validate} from 'mapbox-gl-style-spec'
-import Draw from 'gl-draw-foxgis'
+import MapboxDraw from 'gl-draw-foxgis'
 import Cookies from 'js-cookie'
 export default {
   methods: {
@@ -84,8 +84,8 @@ export default {
         style: style,
         attributionControl: false
       });
-      var draw = Draw();
-      map.addControl(new mapboxgl.Navigation());
+      var draw = new MapboxDraw({displayControlsDefault:false});
+      map.addControl(new mapboxgl.NavigationControl());
       map.addControl(draw);
       this.map = map;
       this.draw = draw;
@@ -317,8 +317,10 @@ export default {
       }
       this.saveStatus = true;
       $("#property-edit").hide();
-      this.map.remove();
-      this.map ={};
+      if(this.map.remove){
+        this.map.remove();
+        this.map ={};
+      }
       window.location.href = "#!/studio/data";
     }
   },

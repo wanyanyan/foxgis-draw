@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import Draw from 'gl-draw-foxgis'
+import MapboxDraw from 'gl-draw-foxgis'
 import { diff, validate} from 'mapbox-gl-style-spec'
 import { changeStyle } from '../../vuex/actions'
 import Cookies from 'js-cookie'
@@ -298,10 +298,11 @@ export default {
         style: style,
         attributionControl: false
       })
-      map.addControl(new mapboxgl.Navigation({position: 'top-right'}))
-      map.addControl(new mapboxgl.Scale({position: 'bottom-left'}));
-      let draw = Draw({
+      map.addControl(new mapboxgl.NavigationControl({position: 'top-right'}))
+      map.addControl(new mapboxgl.ScaleControl({position: 'bottom-left'}));
+      let draw = new MapboxDraw({
         styles: this.glDrawStyle,
+        displayControlsDefault:false
       });
       map.addControl(draw);
       this.draw = draw;

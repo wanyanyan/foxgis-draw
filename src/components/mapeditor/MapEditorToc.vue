@@ -228,11 +228,11 @@
             <div class="text"><span>绘图属性</span></div>
             <div v-for="(name,value) in curPanelLayer.paint" class="property-item">
               <div class="property-name"><span>{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
-              <div class="property-value" v-if="name!=='fill-antialias'&&name!=='fill-translate-anchor'&&name!=='fill-opacity'&&name!=='fill-color'">
+              <div class="property-value" v-if="name!=='fill-antialias'&&name!=='fill-translate-anchor'&&name!=='fill-opacity'&&name.indexOf('color')===-1">
                 <input type="text" :value="value" name="{{name}}" v-if="name==='fill-pattern'" v-on:change='propertyChange' v-on:click='onShowIconPanel' data-type='paint'/>
                 <input type="text" :value="value" v-else v-on:change='propertyChange' name="{{name}}" data-type='paint' />
               </div>
-              <div class="property-value" v-if="name=='fill-color'">
+              <div class="property-value" v-if="name.indexOf('color')!==-1">
                 <input class="color" type="text" v-model="value" v-on:change='propertyChange' v-on:click="colorPickerClick" name="{{name}}" data-type='paint' :style = "'background-color:'+value" lazy/>
               </div>
               <!-- 透明度-->
@@ -248,6 +248,45 @@
               <div class="property-value" v-if="name=='fill-antialias'">
                 <mdl-switch :checked.sync="true" v-if="value==true" v-on:change='propertyChange' data-name="{{name}}" data-type='paint' ></mdl-switch>
                 <mdl-switch :checked.sync="false" v-else v-on:change='propertyChange' data-name="{{name}}" data-type='paint' ></mdl-switch>
+              </div>
+              <i class="material-icons open-stops" data-name="{{name}}" data-type="paint" v-on:click="openStopsPanel">timeline</i>
+            </div>
+          </div>
+          
+          <div class="layout-property prop-group">
+            <div class="text"><span>输出属性</span></div>
+            <div v-for="(name,value) in curPanelLayer.layout" class="property-item">
+              <div class="property-name"><span>{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
+              <div class="property-value">
+                <mdl-switch :checked.sync="true" v-if="value=='visible'" v-on:change='propertyChange' data-name="{{name}}" data-type='layout' ></mdl-switch>
+                <mdl-switch :checked.sync="false" v-else v-on:change='propertyChange' data-name="{{name}}" data-type='layout' ></mdl-switch>
+              </div>
+              <i class="material-icons open-stops" data-name="{{name}}" data-type="layout" v-on:click="openStopsPanel">timeline</i>
+            </div>
+          </div>
+        </div>
+        <!-- 3D填充 -->
+        <div v-if="curPanelLayer.type=='fill-extrusion'">
+          <div class="paint-property prop-group">
+            <div class="text"><span>绘图属性</span></div>
+            <div v-for="(name,value) in curPanelLayer.paint" class="property-item">
+              <div class="property-name"><span>{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
+              <div class="property-value" v-if="name!=='fill-extrusion-translate-anchor'&&name!=='fill-extrusion-opacity'&&name.indexOf('color')===-1">
+                <input type="text" :value="value" name="{{name}}" v-if="name==='fill-extrusion-pattern'" v-on:change='propertyChange' v-on:click='onShowIconPanel' data-type='paint'/>
+                <input type="text" :value="value" v-else v-on:change='propertyChange' name="{{name}}" data-type='paint' />
+              </div>
+              <div class="property-value" v-if="name.indexOf('color')===-1">
+                <input class="color" type="text" v-model="value" v-on:change='propertyChange' v-on:click="colorPickerClick" name="{{name}}" data-type='paint' :style = "'background-color:'+value" lazy/>
+              </div>
+              <!-- 透明度-->
+              <div class="property-value" v-if="name=='fill-extrusion-opacity'" style="padding-top:7px;">
+                <mdl-slider :value.sync="value" min="0" max="1" step="0.05" name="{{name}}" @input='propertyChange' data-type='paint'></mdl-slider>
+              </div>
+              <div class="property-value" v-if="name=='fill-extrusion-translate-anchor'">
+                <select v-model="value" v-on:change='propertyChange' name="{{name}}" data-type='paint'>
+                  <option value="map">地图</option>
+                  <option value="viewport">视图窗口</option>
+                </select>
               </div>
               <i class="material-icons open-stops" data-name="{{name}}" data-type="paint" v-on:click="openStopsPanel">timeline</i>
             </div>
@@ -1756,6 +1795,7 @@ export default {
         'opacity': '透明度',
         'visibility': '显示',
         'width': '宽度',
+        'height': '高度',
         'translate': '偏移',
         'translate-anchor': '偏移相对物',
         'pattern': '图案',
@@ -1805,17 +1845,10 @@ export default {
         'join': '线交叉形式',
         'miter-limit': '切线交叉限制',
         'round-limit': '圆交叉限制',
-        'radius':'半径'
+        'radius':'半径',
+        'base': '高度基准'
       },
       propertyGroup:{},
-      typeIcon: {
-        symbol: '&#xe655;',
-        line: '\e665',
-        background: '\e63a',
-        fill: '\e600',
-        circle: '\e664',
-        raster: '\e668'
-      },
       defaultStyle: {
         'background': {
           'paint': {
@@ -1826,6 +1859,12 @@ export default {
           'paint': {
             'fill-color': '#000000',
             'fill-opacity': 1
+          }
+        },
+        'fill-extrusion': {
+          'paint': {
+            'fill-extrusion-color': '#000000',
+            'fill-extrusion-opacity': 1
           }
         },
         'line': {
@@ -1878,6 +1917,20 @@ export default {
             'fill-translate': [0,0],
             'fill-translate-anchor': 'map',
             'fill-pattern': ''
+          },
+          'layout': {
+            'visibility': 'visible'
+          }
+        },
+        'fill-extrusion': {
+          'paint': {
+            'fill-extrusion-color': '#000000',
+            'fill-extrusion-opacity': 1,
+            'fill-extrusion-translate': [0,0],
+            'fill-extrusion-translate-anchor': 'map',
+            'fill-extrusion-pattern': '',
+            'fill-extrusion-height': 0,
+            'fill-extrusion-base': 0
           },
           'layout': {
             'visibility': 'visible'
@@ -2155,22 +2208,25 @@ export default {
 }
 
 .type-icon.symbol:before{
-  content: "\e655";
+  content: "\e967";
 }
 .type-icon.line:before{
-  content: "\e665";
+  content: "\e97e";
 }
 .type-icon.fill:before{
-  content: "\e600";
+  content: "\e97d";
+}
+.type-icon.fill-extrusion:before{
+  content: "\e9af";
 }
 .type-icon.circle:before{
-  content: "\e664";
+  content: "\e97c";
 }
 .type-icon.raster:before{
-  content: "\e668";
+  content: "\e983";
 }
 .type-icon.background:before{
-  content: "\e63a";
+  content: "\e947";
 }
 a {
   color: rgb(128,128,128);
