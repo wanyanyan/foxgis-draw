@@ -29,7 +29,7 @@
     </div>
     
     <div id="layer-control" v-on:drop="eledrop" v-on:dragover.prevent="eledragover">
-      <div class="layer" v-for="layer in tocLayers" id="layer{{$index}}" draggable="true" v-on:dragstart="eledragstart" v-on:dragenter.prevent="eledragenter">
+      <div class="layer" v-for="layer in tocLayers" id="layer_{{$index}}" draggable="true" v-on:dragstart="eledragstart" v-on:dragenter.prevent="eledragenter">
         <a>
           <label for="{{$index}}" v-on:click="checkSublayer(layer.id,$index,$event)" title="{{layer.id}}">
             <i class="material-icons" v-if="layer.collapsed==true">keyboard_arrow_right</i>
@@ -39,7 +39,7 @@
             <span>{{layer.id}}</span>
           </label>
           <div v-if="layer.items!==undefined" class="sublayer" v-show="layer.collapsed==false">
-            <div v-for="item in layer.items" v-on:click="showPropertyPanel(item.id)" title="{{item.id}}" name="{{item.id}}" id="{{item.id}}" v-on:dragstart="eledragstart" v-on:dragenter.prevent.stop="eledragenter" class="sublayer-item" draggable="true" v-on:mouseover="sublayerMouseover" v-on:mouseleave="sublayerMouseleave">
+            <div v-for="item in layer.items" v-on:click="showPropertyPanel(item.id)" title="{{item.id}}" name="{{item.id}}" id="sublayer_{{item.id}}" v-on:dragstart="eledragstart" v-on:dragenter.prevent.stop="eledragenter" class="sublayer-item" draggable="true" v-on:mouseover="sublayerMouseover" v-on:mouseleave="sublayerMouseleave">
               <i class="type-icon {{item.type}}"></i>
               <span name="{{item.id}}">{{item.id}}</span>
             </div>
@@ -275,7 +275,7 @@
                 <input type="text" :value="value" name="{{name}}" v-if="name==='fill-extrusion-pattern'" v-on:change='propertyChange' v-on:click='onShowIconPanel' data-type='paint'/>
                 <input type="text" :value="value" v-else v-on:change='propertyChange' name="{{name}}" data-type='paint' />
               </div>
-              <div class="property-value" v-if="name.indexOf('color')===-1">
+              <div class="property-value" v-if="name.indexOf('color')!==-1">
                 <input class="color" type="text" v-model="value" v-on:change='propertyChange' v-on:click="colorPickerClick" name="{{name}}" data-type='paint' :style = "'background-color:'+value" lazy/>
               </div>
               <!-- 透明度-->
@@ -1263,14 +1263,9 @@ export default {
       //just for preventDefault
     },
     eledrop: function(e){
-      var dragnode = this.$el.querySelector("#layer"+e.dataTransfer.getData('dragid').substr(5));
-      if(dragnode === null){
-        dragnode = this.$el.querySelector("#"+e.dataTransfer.getData('dragid'));
-      }
+      var dragid = e.dataTransfer.getData('dragid');
+      var dragnode = this.$el.querySelector("#"+dragid);
       var refnode = this.$el.querySelector("*[data-ref='1']");
-      if(refnode == null){
-        return;
-      }
 
       //移除高亮
       refnode.setAttribute('data-ref','0');
@@ -1279,40 +1274,42 @@ export default {
         refnode.className = refnode.className.replace(' layerover','');
       }
 
-      var dragLayer = this.tocLayers[parseInt(e.dataTransfer.getData('dragid').substr(5))];
-      var refLayer = this.tocLayers[parseInt(refnode.id.substr(5))];
+      if(refnode == null){
+        return;
+      }
 
-      //如果是sublayer
-      var dragLayerId;
-      if(dragLayer){
-        dragLayerId = dragLayer.id;
+      var dragLayerId,refLayerId;
+      if(dragid.indexOf("sublayer")!==-1){//拖动的是子元素
+        dragLayerId = dragnode.id.replace("sublayer_","");
       }else{
-        dragLayerId = dragnode.id;
+        var dragLayer = this.tocLayers[parseInt(dragid.substr(6))];
+        dragLayerId = dragLayer.id;
+      }
+
+      if(refnode.id.indexOf("sublayer")!==-1){//参考元素是子元素
+        refLayerId = refnode.id.replace("sublayer_","");
+      }else{
+        var refLayer = this.tocLayers[parseInt(refnode.id.substr(6))];
+        refLayerId= refLayer.id;
+      }
+      //移动元素与参考元素相同或者参考元素是移动元素的子元素，不执行任何操作
+      if(dragLayerId == refLayerId||dragnode.querySelectorAll('div#sublayer_'+refLayerId).length>0){
+        return;
       }
       //如果dragnode是group,则dragLayerId 是其子元素的最后一个的id
       if(dragLayer&&dragLayer.items){
         dragLayerId = dragLayer.items[dragLayer.items.length-1].id;
       }
 
-
-      var refLayerId;
-      if(refLayer){
-        refLayerId= refLayer.id;
-      }else{
-        refLayerId = refnode.id;
-      }
-
-      var dragLayerIndex,refLayerIndex;
-
-      //如果refnode是group
-      var refsublayer = refnode.querySelectorAll('div.sublayer-item');
-      if(refsublayer && refsublayer.length>0){
-        refLayerId = refsublayer[0].id;
+      //如果refnode是group,refLayerId 是其子元素的第一个的id
+      if(refLayer && refLayer.items){
+        refLayerId = refLayer.items[0].id;
       }
 
       var styleObj = this.styleObj;
       var maplayers = styleObj.layers;
       var groupId = '';
+      var dragLayerIndex,refLayerIndex;
 
       if(dragLayerId !== refLayerId){
         //移除

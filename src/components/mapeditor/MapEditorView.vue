@@ -454,6 +454,9 @@ export default {
       handler:function(style,oldStyle){
         var style_error = validate(style);
         if(style_error.length > 0){
+          for(var i = 0;i<style_error.length;i++){
+            console.log(style_error[i].message);
+          }
           return;
         }
         this.localStyle = JSON.parse(JSON.stringify(style));
