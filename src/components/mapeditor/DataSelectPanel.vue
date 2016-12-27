@@ -7,7 +7,6 @@
         <a @click.stop.prevent="uploadClick" id="upload-button">
           <i class="material-icons">file_upload</i>上传数据
         </a>
-        <!-- <mdl-button raised colored v-mdl-ripple-effect @click="uploadClick" id="upload-button">上传数据</mdl-button> -->
         <input type="file" multiple style="display:none" id="file" accept=".zip,.json,.mbtiles">
         <a class="show-status" @click="showStatusPanel">
           <i class="material-icons" v-if="tileCopyStatus.length>0" style="color:#0f6db2;font-weight: bold;">alarm</i>

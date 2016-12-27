@@ -2502,7 +2502,7 @@ a {
 }
 #icon-select-panel,#font-select-panel{
   width: 300px;
-  max-height: 400px;
+  max-height: 450px;
   position: absolute;
   left: 555px;
   top: 150px;

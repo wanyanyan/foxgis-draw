@@ -7,13 +7,16 @@
       </div>
     </div>
     <div class="meta-title">
-      <b>符号详情（<b style="color:#1f78ba;">{{dataset.icons.length}}</b>）</b>
+      <b>符号详情（<b style="color:#1f78ba;">{{displayIcons.length}}</b>）</b>
       <mdl-anchor-button colored v-mdl-ripple-effect class = "add-button" @click="addSprite">添加符号</mdl-anchor-button>
       <input type="file" multiple style="display:none" id="icon-input" accept=".svg">
       <mdl-anchor-button colored v-mdl-ripple-effect class = "add-button" @click="delSprite" v-if="dataset.sprite_id">删除符号</mdl-anchor-button>
     </div>
+    <div class="search">
+      <foxgis-search :placeholder="'搜索'" :value="searchKeyWords" :search-key-words.sync="searchKeyWords"></foxgis-search>
+    </div>
     <div class="icon-container">
-      <a v-for="icon in dataset.icons" class="icon-link" title="{{icon.name}}" @click="bindDel($event)">
+      <a v-for="icon in displayIcons" class="icon-link" title="{{icon.name}}" @click="bindDel($event)">
         <div :style="'background-image:url('+dataset.pngUrl+');background-position:-'+icon.positions.x+'px -'+icon.positions.y+'px;width:'+icon.positions.width+'px;height:'+icon.positions.height+'px;background-repeat: no-repeat;margin:10px;'" title="{{icon.name}}">
         </div>
       </a>
@@ -170,7 +173,38 @@ export default {
   },
   data(){
     return {
-      delSpriteTitle:[]
+      delSpriteTitle:[],
+      searchKeyWords:""
+    }
+  },
+  computed:{
+    displayIcons:function(){
+      var temp = this.dataset.icons;
+      var t=[];
+      if(this.searchKeyWords.trim().length===0){
+        return temp;
+      }else{        
+        var keyWords = this.searchKeyWords.trim().split(' ');
+        keyWords = _.uniq(keyWords);
+        for(let u=0;u<temp.length;u++){
+          var source = temp[u];
+          var num = 0;
+          for(let w=0;w<keyWords.length;w++){
+            var keyWord = keyWords[w];
+            if(keyWord.indexOf(' ')==-1){
+              if(source.name&&source.name.indexOf(keyWord)!=-1){
+                  num++;
+              }
+            }else{
+              num++;
+            }
+          }
+          if(num == keyWords.length){
+            t.push(source);
+          }
+        }
+        return t;
+      }
     }
   }
 
@@ -194,6 +228,28 @@ export default {
   margin-top: 12px;
   margin-bottom: 12px;
   margin-left: 5px;
+}
+
+.search {
+  background-color: white;
+  padding: 10px 5px;
+  border-bottom: 1px solid #eaeaea;
+  display: flex;
+}
+
+.search .mdl-button {
+  height: 30px;
+  font-size: 12px;
+  line-height: 30px;
+  padding: 0 5px;
+  margin: auto 5px;
+}
+
+.foxgis-search {
+  width: 100%;
+  height: 20px;
+  margin: 0;
+  padding: 0;
 }
 
 .icon-container{
