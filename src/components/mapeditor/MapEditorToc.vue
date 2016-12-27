@@ -60,27 +60,6 @@
       </div>
       <!-- 样式设置 -->
       <div id="style-div" class="style-set">
-        <!-- 背景 -->
-        <div v-if="curPanelLayer.type=='background'">
-          <div v-for="(name,value) in curPanelLayer.paint" class="property-item">
-            <div class="property-name"><span >{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
-            <div class="property-value" v-if="name.indexOf('opacity')===-1">
-              <input class="color" type="text" v-model="value" v-if="name.indexOf('color')!=-1" v-on:change='propertyChange' v-on:click="colorPickerClick" name="{{name}}" data-type='paint' :style = "'background-color:'+value" lazy/>
-            </div>
-            <!-- 透明度-->
-            <div class="property-value" v-if="name.indexOf('opacity')!==-1" style="padding-top:7px;">
-              <mdl-slider :value.sync="value" min="0" max="1" step="0.05" name="{{name}}" @input='propertyChange' data-type='paint'></mdl-slider>
-            </div>
-          </div>
-          <!-- layout -->
-          <div v-for="(name,value) in curPanelLayer.layout" class="property-item">
-            <div class="property-name"><span >{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
-            <div class="property-value">
-              <mdl-switch :checked.sync="true" v-if="value=='visible'" v-on:change='propertyChange' data-name="{{name}}" data-type='layout'></mdl-switch>
-              <mdl-switch :checked.sync="false" v-else v-on:change='propertyChange' data-name="{{name}}" data-type='layout'></mdl-switch>
-            </div>
-          </div>
-        </div>
         <!-- 点状符号 -->
         <div v-if="curPanelLayer.type=='symbol'">
           <nav class="mdl-navigation" id="symbol-property-control">
@@ -205,142 +184,52 @@
                   </select>
                 </div>
               </div>
-              <div v-if="curPanelLayer.layout['symbol-placement']==='line'" class="property-item">
-                <div class="property-name"><span >标注盾牌</span></div>
-                <div class="property-value">
-                  <mdl-switch :checked.sync="true" v-if="styleObj.metadata&&styleObj.metadata.shield&&styleObj.metadata.shield.indexOf(curPanelLayer.id)!==-1" v-on:change='labelChange' data-name="shield" data-type='layout' ></mdl-switch>
-                  <mdl-switch :checked.sync="false" v-else v-on:change='labelChange' data-name="shield" data-type='layout' ></mdl-switch>
-                </div>
-              </div>
-              <div v-if="curPanelLayer.layout['symbol-placement']==='point'" class="property-item">
-                <div class="property-name"><span >动态标注</span></div>
-                <div class="property-value">
-                  <mdl-switch :checked.sync="true" v-if="styleObj.metadata&&styleObj.metadata.autolabel&&styleObj.metadata.autolabel.indexOf(curPanelLayer.id)!==-1" v-on:change='labelChange' data-name="autolabel" data-type='layout' ></mdl-switch>
-                  <mdl-switch :checked.sync="false" v-else v-on:change='labelChange' data-name="autolabel" data-type='layout' ></mdl-switch>
-                </div>
-              </div>
             </div>
           </div>
         </div>
-        <!-- 面状符号 -->
-        <div v-if="curPanelLayer.type=='fill'">
+        <div v-else>
+          <!-- 绘图属性 -->
           <div class="paint-property prop-group">
             <div class="text"><span>绘图属性</span></div>
             <div v-for="(name,value) in curPanelLayer.paint" class="property-item">
               <div class="property-name"><span>{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
-              <div class="property-value" v-if="name!=='fill-antialias'&&name!=='fill-translate-anchor'&&name!=='fill-opacity'&&name.indexOf('color')===-1">
-                <input type="text" :value="value" name="{{name}}" v-if="name==='fill-pattern'" v-on:change='propertyChange' v-on:click='onShowIconPanel' data-type='paint'/>
+              <div class="property-value" v-if="name.indexOf('antialias')===-1&&name.indexOf('translate-anchor')===-1&&name.indexOf('opacity')===-1&&name.indexOf('color')===-1">
+                <input type="text" :value="value" name="{{name}}" v-if="name.indexOf('pattern')!==-1" v-on:change='propertyChange' v-on:click='onShowIconPanel' data-type='paint'/>
                 <input type="text" :value="value" v-else v-on:change='propertyChange' name="{{name}}" data-type='paint' />
               </div>
+              <!-- 颜色 -->
               <div class="property-value" v-if="name.indexOf('color')!==-1">
                 <input class="color" type="text" v-model="value" v-on:change='propertyChange' v-on:click="colorPickerClick" name="{{name}}" data-type='paint' :style = "'background-color:'+value" lazy/>
               </div>
               <!-- 透明度-->
-              <div class="property-value" v-if="name=='fill-opacity'" style="padding-top:7px;">
+              <div class="property-value" v-if="name.indexOf('opacity')!==-1" style="padding-top:7px;">
                 <mdl-slider :value.sync="value" min="0" max="1" step="0.05" name="{{name}}" @input='propertyChange' data-type='paint'></mdl-slider>
               </div>
-              <div class="property-value" v-if="name=='fill-translate-anchor'">
+              <!-- 偏移参考 -->
+              <div class="property-value" v-if="name.indexOf('translate-anchor')!==-1">
                 <select v-model="value" v-on:change='propertyChange' name="{{name}}" data-type='paint'>
                   <option value="map">地图</option>
                   <option value="viewport">视图窗口</option>
                 </select>
               </div>
-              <div class="property-value" v-if="name=='fill-antialias'">
+              <!-- 抗锯齿 -->
+              <div class="property-value" v-if="name.indexOf('antialias')!==-1">
                 <mdl-switch :checked.sync="true" v-if="value==true" v-on:change='propertyChange' data-name="{{name}}" data-type='paint' ></mdl-switch>
                 <mdl-switch :checked.sync="false" v-else v-on:change='propertyChange' data-name="{{name}}" data-type='paint' ></mdl-switch>
               </div>
               <i class="material-icons open-stops" data-name="{{name}}" data-type="paint" v-on:click="openStopsPanel">timeline</i>
             </div>
           </div>
-          
+          <!-- 输出属性 -->
           <div class="layout-property prop-group">
             <div class="text"><span>输出属性</span></div>
             <div v-for="(name,value) in curPanelLayer.layout" class="property-item">
               <div class="property-name"><span>{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
-              <div class="property-value">
-                <mdl-switch :checked.sync="true" v-if="value=='visible'" v-on:change='propertyChange' data-name="{{name}}" data-type='layout' ></mdl-switch>
-                <mdl-switch :checked.sync="false" v-else v-on:change='propertyChange' data-name="{{name}}" data-type='layout' ></mdl-switch>
-              </div>
-              <i class="material-icons open-stops" data-name="{{name}}" data-type="layout" v-on:click="openStopsPanel">timeline</i>
-            </div>
-          </div>
-        </div>
-        <!-- 3D填充 -->
-        <div v-if="curPanelLayer.type=='fill-extrusion'">
-          <div class="paint-property prop-group">
-            <div class="text"><span>绘图属性</span></div>
-            <div v-for="(name,value) in curPanelLayer.paint" class="property-item">
-              <div class="property-name"><span>{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
-              <div class="property-value" v-if="name!=='fill-extrusion-translate-anchor'&&name!=='fill-extrusion-opacity'&&name.indexOf('color')===-1">
-                <input type="text" :value="value" name="{{name}}" v-if="name==='fill-extrusion-pattern'" v-on:change='propertyChange' v-on:click='onShowIconPanel' data-type='paint'/>
-                <input type="text" :value="value" v-else v-on:change='propertyChange' name="{{name}}" data-type='paint' />
-              </div>
-              <div class="property-value" v-if="name.indexOf('color')!==-1">
-                <input class="color" type="text" v-model="value" v-on:change='propertyChange' v-on:click="colorPickerClick" name="{{name}}" data-type='paint' :style = "'background-color:'+value" lazy/>
-              </div>
-              <!-- 透明度-->
-              <div class="property-value" v-if="name=='fill-extrusion-opacity'" style="padding-top:7px;">
-                <mdl-slider :value.sync="value" min="0" max="1" step="0.05" name="{{name}}" @input='propertyChange' data-type='paint'></mdl-slider>
-              </div>
-              <div class="property-value" v-if="name=='fill-extrusion-translate-anchor'">
-                <select v-model="value" v-on:change='propertyChange' name="{{name}}" data-type='paint'>
-                  <option value="map">地图</option>
-                  <option value="viewport">视图窗口</option>
-                </select>
-              </div>
-              <i class="material-icons open-stops" data-name="{{name}}" data-type="paint" v-on:click="openStopsPanel">timeline</i>
-            </div>
-          </div>
-          
-          <div class="layout-property prop-group">
-            <div class="text"><span>输出属性</span></div>
-            <div v-for="(name,value) in curPanelLayer.layout" class="property-item">
-              <div class="property-name"><span>{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
-              <div class="property-value">
-                <mdl-switch :checked.sync="true" v-if="value=='visible'" v-on:change='propertyChange' data-name="{{name}}" data-type='layout' ></mdl-switch>
-                <mdl-switch :checked.sync="false" v-else v-on:change='propertyChange' data-name="{{name}}" data-type='layout' ></mdl-switch>
-              </div>
-              <i class="material-icons open-stops" data-name="{{name}}" data-type="layout" v-on:click="openStopsPanel">timeline</i>
-            </div>
-          </div>
-        </div>
-        <!-- 线状符号 -->
-        <div v-if="curPanelLayer.type=='line'">
-          <div class="paint-property prop-group">
-            <div class="text"><span>绘图属性</span></div>
-            <div v-for="(name,value) in curPanelLayer.paint" class="property-item">
-              <div class="property-name"><span >{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
-              <div class="property-value" v-if="name!=='line-translate-anchor'&&name!=='line-opacity'&&name!=='line-color'">
-                <input type="text" :value="value" name="{{name}}" v-if="name==='line-pattern'" v-on:change='propertyChange' v-on:click='onShowIconPanel' data-type='paint'/>
-                <input type="text" :value="value" v-else v-on:change='propertyChange' name="{{name}}" data-type='paint' />
-              </div>
-              <div class="property-value" v-if="name=='line-color'">
-                <input class="color" type="text" v-model="value" v-on:change='propertyChange' v-on:click="colorPickerClick" name="{{name}}" data-type='paint' :style = "'background-color:'+value" lazy/>
-              </div>
-              <!-- 透明度-->
-              <div class="property-value" v-if="name=='line-opacity'" style="padding-top:7px;">
-                <mdl-slider :value.sync="value" min="0" max="1" step="0.05" name="{{name}}" @input='propertyChange' data-type='paint'></mdl-slider>
-              </div>
-              <div class="property-value" v-if="name=='line-translate-anchor'">
-                <select v-model="value" v-on:change='propertyChange' name="{{name}}" data-type='paint'>
-                  <option value="map">地图</option>
-                  <option value="viewport">视图窗口</option>
-                </select>
-              </div>
-              <i class="material-icons open-stops" data-name="{{name}}" data-type="paint" v-on:click="openStopsPanel">timeline</i>
-            </div>
-          </div>
-          <div class="layout-property prop-group">
-            <div class="text"><span>输出属性</span></div>
-            <div v-for="(name,value) in curPanelLayer.layout" class="property-item">
-              <div class="property-name"><span >{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
+              <!-- input -->
               <div class="property-value" v-if="name!=='line-miter-limit'&&name!=='line-round-limit'&&name!=='line-cap'&&name!=='line-join'&&name!=='visibility'">
                 <input type="text" :value="value" v-on:change='propertyChange' name="{{name}}" data-type='layout' />
               </div>
-              <div class="property-value" v-if="name=='visibility'">
-                <mdl-switch :checked.sync="true" v-if="value=='visible'" v-on:change='propertyChange' data-name="{{name}}" data-type='layout' ></mdl-switch>
-                <mdl-switch :checked.sync="false" v-else v-on:change='propertyChange' data-name="{{name}}" data-type='layout' ></mdl-switch>
-              </div>
+              <!-- line-cap -->
               <div class="property-value" v-if="name=='line-cap'">
                 <select v-model="value" v-on:change='propertyChange' name="{{name}}" data-type='layout'>
                   <option value="butt">粗</option>
@@ -348,6 +237,7 @@
                   <option value="square">方</option>
                 </select>
               </div>
+              <!-- line-join -->
               <div class="property-value" v-if="name=='line-join'">
                 <select v-model="value" v-on:change='propertyChange' name="{{name}}" data-type='layout'>
                   <option value="bevel">斜交叉</option>
@@ -355,84 +245,24 @@
                   <option value="round">圆交叉</option>
                 </select>
               </div>
+              <!-- round-limit -->
               <div class="property-value" v-if="name=='line-round-limit'">
                 <input type="text" :value="value" v-on:change='propertyChange' v-if="curPanelLayer.layout['line-join']=='miter' || curPanelLayer.layout['line-join']=='bevel'" disabled name="{{name}}" data-type='layout'/>
                 <input type="text" :value="value" v-on:change='propertyChange' v-else name="{{name}}" data-type='layout'/>
               </div>
+              <!-- miter-limit -->
               <div class="property-value" v-if="name=='line-miter-limit'">
                 <input type="text" :value="value" v-on:change='propertyChange' v-if="curPanelLayer.layout['line-join']=='round' || curPanelLayer.layout['line-join']=='bevel'" disabled name="{{name}}" data-type='layout'/>
                 <input type="text" :value="value" v-on:change='propertyChange' v-else name="{{name}}" data-type='layout'/>
               </div>
-              <i class="material-icons open-stops" data-name="{{name}}" data-type="layout" v-on:click="openStopsPanel">timeline</i>
-            </div>
-          </div>
-          
-        </div>
-        <!-- 圆 -->
-        <div v-if="curPanelLayer.type=='circle'">
-          <div class="paint-property prop-group">
-            <div class="text"><span>绘图属性</span></div>
-            <div v-for="(name,value) in curPanelLayer.paint" class="property-item">
-              <div class="property-name"><span >{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
-              <div class="property-value" v-if="name!=='circle-translate-anchor'&&name!=='circle-opacity'">
-                <input class="color" type="text" v-model="value" v-if="name.indexOf('color')!=-1" v-on:change='propertyChange' v-on:click="colorPickerClick" name="{{name}}" data-type='paint' :style = "'background-color:'+value" lazy/>
-                <input type="text" :value="value" v-else v-on:change='propertyChange' name="{{name}}" data-type='paint' />
-              </div>
-              <!-- 透明度-->
-              <div class="property-value" v-if="name=='circle-opacity'" style="padding-top:7px;">
-                <mdl-slider :value.sync="value" min="0" max="1" step="0.05" name="{{name}}" @input='propertyChange' data-type='paint'></mdl-slider>
-              </div>
-              <div class="property-value" v-if="name=='circle-translate-anchor'">
-                <select v-model="value" v-on:change='propertyChange' name="{{name}}" data-type='paint'>
-                  <option value="map">地图</option>
-                  <option value="viewport">视图窗口</option>
-                </select>
-              </div>
-              <i class="material-icons open-stops" data-name="{{name}}" data-type="paint" v-on:click="openStopsPanel">timeline</i>
-            </div>
-          </div>
-          
-          <div class="layout-property prop-group">
-            <div class="text"><span>输出属性</span></div>
-            <div v-for="(name,value) in curPanelLayer.layout" class="property-item">
-              <div class="property-name"><span >{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
-              <div class="property-value">
+              <!-- visibility -->
+              <div class="property-value" v-if="name=='visibility'">
                 <mdl-switch :checked.sync="true" v-if="value=='visible'" v-on:change='propertyChange' data-name="{{name}}" data-type='layout' ></mdl-switch>
                 <mdl-switch :checked.sync="false" v-else v-on:change='propertyChange' data-name="{{name}}" data-type='layout' ></mdl-switch>
               </div>
               <i class="material-icons open-stops" data-name="{{name}}" data-type="layout" v-on:click="openStopsPanel">timeline</i>
             </div>
           </div>
-          
-        </div>
-        <!-- 栅格 -->
-        <div v-if="curPanelLayer.type=='raster'">
-          <div class="paint-property prop-group">
-            <div class="text"><span>绘图属性</span></div>
-            <div v-for="(name,value) in curPanelLayer.paint" class="property-item">
-              <div class="property-name"><span >{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
-              <div class="property-value" v-if="name!=='raster-opacity'">
-                <input type="text" :value="value" v-on:change='propertyChange' name="{{name}}" data-type='paint' />
-              </div>
-              <!-- 透明度-->
-              <div class="property-value" v-if="name=='raster-opacity'" style="padding-top:7px;">
-                <mdl-slider :value.sync="value" min="0" max="1" step="0.05" name="{{name}}" @input='propertyChange' data-type='paint'></mdl-slider>
-              </div>
-              <i class="material-icons open-stops" data-name="{{name}}" data-type="paint" v-on:click="openStopsPanel">timeline</i>
-            </div>
-          </div>
-          
-          <div class="layout-property prop-group">
-            <div class="text"><span>输出属性</span></div>
-            <div v-for="(name,value) in curPanelLayer.layout" class="property-item">
-              <div class="property-name"><span >{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
-              <div class="property-value">
-                <mdl-switch :checked.sync="true" v-if="value=='visible'" v-on:change='propertyChange' data-name="{{name}}" data-type='layout' ></mdl-switch>
-                <mdl-switch :checked.sync="false" v-else v-on:change='propertyChange' data-name="{{name}}" data-type='layout' ></mdl-switch>
-              </div>
-              <i class="material-icons open-stops" data-name="{{name}}" data-type="layout" v-on:click="openStopsPanel">timeline</i>
-            </div>
-          </div>   
         </div>
       </div>
       <!-- 数据选择 -->
@@ -485,6 +315,7 @@ import Cookies from 'js-cookie'
 import { changeStyle } from '../../vuex/actions'
 import _ from 'lodash'
 import glfun from 'mapbox-gl-function'
+import styleProperty from './style_property.js'
 export default {
   vuex: {
     getters: {
@@ -968,32 +799,6 @@ export default {
         }else {
           inputDomR.disabled = 'disabled';
           inputDomM.disabled = 'disabled';
-        }
-      }
-
-      var data = JSON.parse(JSON.stringify(this.styleObj));
-      this.changeStyle(data);
-    },
-    labelChange:function(e){
-      var currentLayer = this.currentLayer;
-      var targetDom = e.target;
-      var type = targetDom.parentElement.dataset.name;
-      var value = targetDom.checked;
-
-      if(value===true){
-        if(!this.styleObj.metadata){
-          this.styleObj.metadata = {};
-          this.styleObj.metadata[type] = [];
-        }
-        if(!this.styleObj.metadata[type]){
-          this.styleObj.metadata[type] = [];
-        }
-        this.styleObj.metadata[type].push(currentLayer.id);
-      }else{
-        for(var i = 0;i<this.styleObj.metadata[type].length;i++){
-          if(this.styleObj.metadata[type][i]===currentLayer.id){
-            this.styleObj.metadata[type].splice(i,1);
-          }
         }
       }
 
@@ -1745,6 +1550,11 @@ export default {
       this.changeStyle(data); 
     }
   },
+  attached(){
+    this.defaultStyle = styleProperty.defaultStyle;
+    this.translate = styleProperty.translate;
+    this.defaultProperty = styleProperty.defaultProperty;
+  },
   data: function() {
     return {
       tocLayers: [],
@@ -1785,241 +1595,11 @@ export default {
         textOk:'是',
         textCancel:'否',
         type:""
-      },
-      translate: {
-        'color': '颜色',
-        'outline-color': '边框颜色',
-        'opacity': '透明度',
-        'visibility': '显示',
-        'width': '宽度',
-        'height': '高度',
-        'translate': '偏移',
-        'translate-anchor': '偏移相对物',
-        'pattern': '图案',
-        'antialias': '反锯齿',
-        'icon-image':'图标名称',
-        'icon-size':'图标大小',
-        'icon-rotate':'图标旋转',
-        'icon-offset':'图标偏移',
-        'icon-allow-overlap':'允许覆盖',
-        'icon-ignore-placement':'允许被覆盖',
-        'icon-opacity': '图标透明度',
-        'icon-color': '图标颜色',
-        'icon-halo-color': '图标光晕颜色',
-        'icon-halo-width': '图标光晕宽度',
-        'icon-halo-blur':'光晕模糊度',
-        'text-field':'注记字段',
-        'text-font':'注记字体',
-        'text-size': '字体大小',
-        'text-max-width': '注记最大宽度',
-        'text-line-height':"注记行高",
-        'text-letter-spacing':'字体间距',
-        'text-anchor':'注记位置',
-        'text-rotate':'注记旋转',
-        'text-offset':'注记偏移',
-        'text-allow-overlap':'允许覆盖',
-        'text-ignore-placement':'允许被覆盖',
-        'text-opacity': '文字透明度',
-        'text-color': '字体颜色',
-        'text-halo-color': '字体光晕颜色',
-        'text-halo-width': '字体光晕宽度',
-        'text-halo-blur': '光晕模糊度',
-        'pattern': '图案填充',
-        'contrast': '对比度',
-        'hue-rotate': '色相旋转',
-        'brightness-min': '最小亮度',
-        'brightness-max': '最大亮度',
-        'saturation': '饱和度',
-        'fade-duration': '淡出时效',
-        'placement': '符号位置',
-        'spacing': '符号间隔',
-        'avoid-edges':'避免边缘',
-        'gap-width': '间隙宽度',
-        'offset': '方向偏移',
-        'blur': '模糊距离',
-        'dasharray': '虚线',
-        'cap': '线尾样式',
-        'join': '线交叉形式',
-        'miter-limit': '切线交叉限制',
-        'round-limit': '圆交叉限制',
-        'radius':'半径',
-        'base': '高度基准'
-      },
+      }, 
       propertyGroup:{},
-      defaultStyle: {
-        'background': {
-          'paint': {
-            'background-color': '#000000'
-          }
-        },
-        'fill': {
-          'paint': {
-            'fill-color': '#000000',
-            'fill-opacity': 1
-          }
-        },
-        'fill-extrusion': {
-          'paint': {
-            'fill-extrusion-color': '#000000',
-            'fill-extrusion-opacity': 1
-          }
-        },
-        'line': {
-          'paint': {
-            'line-color': '#000000',
-            'line-opacity': 1,
-            'line-width': 1
-          }
-        },
-        'raster': {
-          'paint': {
-            'raster-opacity': 1
-          }
-        },
-        'circle': {
-          'paint': {
-            'circle-color': '#000000',
-            'circle-radius': 5,
-            'circle-opacity': 1,
-          }
-        },
-        'symbol': {
-          'paint': {
-            'text-opacity':1,
-            'text-color': '#000000'
-          },
-          'layout': {
-            'text-field':'',
-            'text-font':['SimHei Regular'],
-            'text-size': 16
-          }
-        }
-      },
-      defaultProperty: {
-        'background': {
-          'paint': {
-            'background-color': '#000000',
-            'background-opacity': 1
-          },
-          'layout': {
-            'visibility': 'visible'
-          }
-        },
-        'fill': {
-          'paint': {
-            'fill-color': '#000000',
-            'fill-opacity': 1,
-            'fill-outline-color': '#000000',
-            'fill-antialias': true,
-            'fill-translate': [0,0],
-            'fill-translate-anchor': 'map',
-            'fill-pattern': ''
-          },
-          'layout': {
-            'visibility': 'visible'
-          }
-        },
-        'fill-extrusion': {
-          'paint': {
-            'fill-extrusion-color': '#000000',
-            'fill-extrusion-opacity': 1,
-            'fill-extrusion-translate': [0,0],
-            'fill-extrusion-translate-anchor': 'map',
-            'fill-extrusion-pattern': '',
-            'fill-extrusion-height': 0,
-            'fill-extrusion-base': 0
-          },
-          'layout': {
-            'visibility': 'visible'
-          }
-        },
-        'line': {
-          'paint': {
-            'line-color': '#000000',
-            'line-opacity': 1,
-            'line-translate': [0,0],
-            'line-translate-anchor': 'map',
-            'line-width': 1,
-            'line-gap-width': 0,
-            'line-offset': 0,
-            'line-blur': 0,
-            'line-dasharray': [1,0],
-            'line-pattern': ''
-          },
-          'layout': {
-            'visibility': 'visible',
-            'line-cap': 'butt',
-            'line-join': 'miter',
-            'line-miter-limit': 2,
-            'line-round-limit': 1.05
-          }
-        },
-        'raster': {
-          'paint': {
-            'raster-opacity': 1,
-            'raster-contrast': 0,
-            'raster-hue-rotate': 0,
-            'raster-brightness-min': 0,
-            'raster-brightness-max': 1,
-            'raster-saturation': 0,
-            'raster-fade-duration': 300
-
-          },
-          'layout': {
-            'visibility': 'visible'
-          }
-        },
-        'circle': {
-          'paint': {
-            'circle-color': '#000000',
-            'circle-radius': 5,
-            'circle-blur': 0,
-            'circle-opacity': 1,
-            'circle-translate': [0,0],
-            'circle-translate-anchor': 'map'
-          },
-          'layout': {
-            'visibility': 'visible'
-          }
-        },
-        'symbol': {
-          'paint': {
-            'icon-opacity':1,
-            'icon-color': '#000000',
-            'icon-halo-color': '#ffffff',
-            'icon-halo-width': 0,
-            'icon-halo-blur':0,
-            'text-opacity':1,
-            'text-color': '#000000',
-            'text-halo-color': '#ffffff',
-            'text-halo-width': 0,
-            'text-halo-blur':0
-          },
-          'layout': {
-            'symbol-placement': 'point',
-            'symbol-spacing': 250,
-            'symbol-avoid-edges':false,
-            'visibility': 'visible',
-            'icon-image':'',
-            'icon-size': 1,
-            'icon-offset':[0,0],
-            'icon-rotate':0,
-            'icon-allow-overlap':false,
-            'icon-ignore-placement':false,
-            'text-field':'',
-            'text-font':['SimHei Regular'],
-            'text-size': 16,
-            'text-max-width': 10,
-            'text-line-height':1.2,
-            'text-letter-spacing':0,
-            'text-anchor':'center',
-            'text-rotate':0,
-            'text-offset':[0,0],
-            'text-allow-overlap':false,
-            'text-ignore-placement':false
-          }
-        }
-      }
+      defaultStyle:{},
+      translate:{},
+      defaultProperty:{}
     }
   },
   watch: {
