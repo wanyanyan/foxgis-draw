@@ -284,25 +284,7 @@
       <mdl-button colored raised id="btn-cancel" @click="createPanelClose">关闭</mdl-button>
     </div>
 
-    <div id="font-select-panel" class="panel">
-      <div class="meta-title">
-        <b>字体详情</b>
-      </div>
-      <div class="font-list">
-        <div class="font-family" v-for="(family,fonts) in fontList" >
-          <div class="family-name" @click="fontFamilyClick">
-            <i class="material-icons">folder</i>
-            <span>{{family}}<b style="color:#1f78ba;">({{fonts.length}})</b></span>
-          </div>
-          
-          <div class="font-item"  v-for="font in fonts" title="{{font.name}}" style="display:none;">
-            <i class="material-icons">title</i>
-            <img :src="font.previewUrl" title="{{font.name}}" style="width:calc(100% - 25px);">
-          </div>
-        </div>  
-      </div>
-    </div>
-
+    <foxgis-font-panel id="font-select-panel" class="panel" :dataset="fontList"></foxgis-font-panel>
     <foxgis-icon-panel id="icon-select-panel" class="panel" :dataset="spriteObj"></foxgis-icon-panel>
     <foxgis-stops-panel id="stops-panel" class="panel" :stopsdata="stopsData" :name="stopsData.property.name" :layerfields="layerFields"></foxgis-stops-panel>
     <foxgis-dialog-single id="copy-layer-panel" @dialog-action="copyLayerAction" :dialog="dialogcontent"></foxgis-dialog-single>
@@ -338,7 +320,6 @@ export default {
         onChange:function(hsb,hex,rgb,el){
           $(el).css('background-color','#'+hex);
           $(el).val('#'+hex);
-          //$(el).colpickHide();
           var options = {};
           options.name = $(el).attr("name");
           options.type = el.dataset.type;
@@ -354,7 +335,6 @@ export default {
         $("#property-control .style")[0].click();
         $("#property-panel").hide();
       }
-
       var newLayerPanel = $("#new-layer-panel");
       if(newLayerPanel.is(":visible")){
         newLayerPanel.hide();
@@ -377,7 +357,6 @@ export default {
           },
           'folder':""
         }
-        //this.sourceLayers=[];
       }
     },
     //属性面板的tab菜单
@@ -426,7 +405,6 @@ export default {
           $("#symbol-div").css("display","block");
         }
       }
-      
     },
     fixType: function(layer){
       //有的layer没有type属性，有ref属性,补充这个信息
@@ -536,7 +514,6 @@ export default {
         if(layer['metadata']&&layer['metadata']['mapbox:group']){
           var layername = groups[layer['metadata']['mapbox:group']].name;
           var collapsed = groups[layer['metadata']['mapbox:group']].collapsed;
-
           if(mylayers[layerIndex]&&mylayers[layerIndex]['id'] == layername){
             mylayers[layerIndex]['items'].push(layer);
           }else{
@@ -699,13 +676,10 @@ export default {
       if(activeLayer&&activeLayer.className.indexOf('active')!==-1){
         activeLayer.className = activeLayer.className.replace(' active','');
       }
-
       if(ct.className.indexOf('active') === -1&&activeLayer !== ct){
         ct.className += ' active';
       }
-
       var collapsed = this.tocLayers[index].collapsed;
-
       // 如果是group
       if( collapsed !== undefined){
         var metadata = this.styleObj['metadata'];
@@ -725,7 +699,6 @@ export default {
       }else{
         this.showPropertyPanel(layer_id);
       }
-
     },
     
     propertyChange:function(e){
@@ -733,7 +706,6 @@ export default {
       var layers = this.styleObj.layers;
       var targetDom = e.target;
       var value;
-
       if(targetDom.tagName === 'SELECT'){
         value = targetDom.options[targetDom.selectedIndex].value;
       }else{
@@ -763,14 +735,12 @@ export default {
       if(targetDom.name==="line-dasharray"&&((value.length===2&&value[1]===0)||typeof value==="number")){//如line-dasharray=[1,0]或line-dasharray=3的时候显示的应该是实线
         value=undefined;
       }
-
       if(!currentLayer.hasOwnProperty('layout')){
         currentLayer.layout = {};
       }
       if(!currentLayer.hasOwnProperty('paint')){
         currentLayer.paint = {};
       }
-      
       if(targetDom.type === 'checkbox'){
         if(targetDom.parentElement.dataset.name === 'visibility'){//visibility
           if(targetDom.checked){
@@ -786,7 +756,6 @@ export default {
       }else{
         currentLayer[targetDom.dataset.type][targetDom.name] = value;
       }
-
       if(targetDom.name === 'line-join'){
         var inputDomR = document.querySelector("input[name='line-round-limit']");
         var inputDomM = document.querySelector("input[name='line-miter-limit']");
@@ -801,7 +770,6 @@ export default {
           inputDomM.disabled = 'disabled';
         }
       }
-
       var data = JSON.parse(JSON.stringify(this.styleObj));
       this.changeStyle(data);
     },
@@ -983,11 +951,8 @@ export default {
       $("#new-layer-panel select[name='source']").val("");
       $("#new-layer-panel select[name='source-layer']").val("");
       $("#new-layer-panel input[name='folder']").val("");
-      //this.sourceLayers=[];
-
       $("#new-layer-panel input[name='minzoom']").val(0);
       $("#new-layer-panel input[name='maxzoom']").val(22);
-
       $("#new-layer-panel input[name='type'][value='fill']").attr("checked",true);
       $("#new-layer-panel").hide();
     },
@@ -1071,18 +1036,15 @@ export default {
       var dragid = e.dataTransfer.getData('dragid');
       var dragnode = this.$el.querySelector("#"+dragid);
       var refnode = this.$el.querySelector("*[data-ref='1']");
-
       //移除高亮
       refnode.setAttribute('data-ref','0');
       var lyindex = refnode.className.indexOf(' layerover');
       if(lyindex !== -1){
         refnode.className = refnode.className.replace(' layerover','');
       }
-
       if(refnode == null){
         return;
       }
-
       var dragLayerId,refLayerId;
       if(dragid.indexOf("sublayer")!==-1){//拖动的是子元素
         dragLayerId = dragnode.id.replace("sublayer_","");
@@ -1105,17 +1067,14 @@ export default {
       if(dragLayer&&dragLayer.items){
         dragLayerId = dragLayer.items[dragLayer.items.length-1].id;
       }
-
       //如果refnode是group,refLayerId 是其子元素的第一个的id
       if(refLayer && refLayer.items){
         refLayerId = refLayer.items[0].id;
       }
-
       var styleObj = this.styleObj;
       var maplayers = styleObj.layers;
       var groupId = '';
       var dragLayerIndex,refLayerIndex;
-
       if(dragLayerId !== refLayerId){
         //移除
         for(let i=0,length=maplayers.length;i<length;i++){
@@ -1132,7 +1091,6 @@ export default {
             break;
           }
         }
-
         //插入
         for(let i=0,length=maplayers.length;i<length;i++){
           var name = maplayers[i].id;
@@ -1149,13 +1107,11 @@ export default {
             break;
           }
         }
-
         //如果dragnode 是sublayer
         if(dragnode.className.indexOf('sublayer-item') !== -1){
           groupId = dragLayer.metadata["mapbox:group"];
           delete dragLayer['metadata'];
         }
-
         //如果refnode是sublayer
         if(refnode.className.indexOf('sublayer-item') !== -1){
           //如果dragnode是group
@@ -1197,7 +1153,6 @@ export default {
       if(f===0){
         delete this.styleObj.metadata["mapbox:groups"][groupId];
       }
-
       var data = JSON.parse(JSON.stringify(this.styleObj));
       this.changeStyle(data);
     },
@@ -1205,12 +1160,10 @@ export default {
       //先移除
       var over = document.querySelectorAll("*[data-ref='1']");
       var currentTarget = e.currentTarget;
-
       for(let i=0,length = over.length;i<length;i++){
         over[i].setAttribute('data-ref','0');
         over[i].className = over[i].className.replace(' layerover','');
       }
-
       currentTarget.setAttribute('data-ref','1');
       var lyindex = currentTarget.className.indexOf('layerover');
       if(lyindex === -1){
@@ -1251,7 +1204,6 @@ export default {
       $("#icon-select-panel").hide();
     },
     onShowFontPanel:function(e){
-      
       var fontPanel = $("#font-select-panel");
       if(fontPanel.is(":visible")===true){
         fontPanel.hide();
@@ -1270,18 +1222,8 @@ export default {
       this.propertyChange(inputEvent);
       $("#font-select-panel").hide();
     },
-    fontFamilyClick:function(e){
-      
-      var font_item = $(e.target).closest(".font-family").children(".font-item");
-      if(font_item.is(":visible")){
-        font_item.css("display","none");
-      }else{
-        font_item.css("display","block");
-      }
-    },
     /**
     * 利用gl-function计算stops函数在当前级别的值
-    *
     * @参数 {Object} parameters 包括type和stops对象
     * @返回值 {Number||Object||String}} 当前级别的值
     */
@@ -1316,7 +1258,6 @@ export default {
       $(".open-stops").removeClass("open");
       $(e.target).addClass("open");
       $("#stops-panel").show();
-
       var propertyName = e.target.dataset.name;
       var type = e.target.dataset.type;//layout/paint
       if(!this.currentLayer[type]){
@@ -1400,7 +1341,6 @@ export default {
       //展示属性
       this.curPanelLayer = this.filterProperty(this.currentLayer);
       this.propertyGroup = this.resolvePropertyGroup(this.curPanelLayer);
-      
     },
     'toc-layer-change': function(id){
       $("input[name='icon-image']").unbind("click");
@@ -1685,12 +1625,12 @@ export default {
 </script>
 
 <style scoped>
-
 #style-header {
   height: 36px;
   padding: 5px;
   border-bottom: 1px solid #e6e6e6;
 }
+
 .style-title{
   width: 124px;
   line-height: 36px;
@@ -1698,6 +1638,7 @@ export default {
   position: relative;
   bottom: 10px;
 }
+
 #style-header .block{
   width: 5px;
   height: 18px;
@@ -1705,6 +1646,7 @@ export default {
   float: left;
   margin: 2px;
 }
+
 #style-header .text{
   position: relative;
   white-space: nowrap;
@@ -1757,24 +1699,6 @@ export default {
   scrollbar-track-color:#f5f5f5;
   scrollbar-face-color:#dcdcdc;
   clear: both;
-}
-
-#layer-control::-webkit-scrollbar {
-  width: 6px;
-}
-
-#layer-control::-webkit-scrollbar:horizontal {
-  height: 6px;
-}
-
-/* 滚动条的滑轨背景颜色 */
-#layer-control::-webkit-scrollbar-track {
-  background-color: #f5f5f5;
-}
-
-/* 滑块颜色 */
-#layer-control::-webkit-scrollbar-thumb {
-  background-color: #dcdcdc;
 }
 
 .type-icon:before{
@@ -1883,24 +1807,6 @@ a {
   scrollbar-face-color:#dcdcdc;
 }
 
-#property-panel::-webkit-scrollbar {
-  width: 6px;
-}
-
-#property-panel::-webkit-scrollbar:horizontal {
-  height: 6px;
-}
-
-/* 滚动条的滑轨背景颜色 */
-#property-panel::-webkit-scrollbar-track {
-  background-color: #f5f5f5;
-}
-
-/* 滑块颜色 */
-#property-panel::-webkit-scrollbar-thumb {
-  background-color: #dcdcdc;
-} 
-
 #new-layer-panel .prop-group {
   overflow-y: auto;
   overflow-x: hidden;
@@ -1912,29 +1818,11 @@ a {
   width: 250px;
   margin: 30px 25px 0px 25px;
 }
+
 #btn-cancel{
   margin-top: 10px;
   margin-bottom: 20px;
 }
-
-#style-div::-webkit-scrollbar,#data-div::-webkit-scrollbar {
-  width: 6px;
-}
-
-#style-div::-webkit-scrollbar:horizontal,#data-div::-webkit-scrollbar:horizontal {
-  height: 6px;
-}
-
-/* 滚动条的滑轨背景颜色 */
-#style-div::-webkit-scrollbar-track,#data-div::-webkit-scrollbar-track {
-  background-color: #f5f5f5;
-}
-
-/* 滑块颜色 */
-#style-div::-webkit-scrollbar-thumb,#data-div::-webkit-scrollbar-thumb {
-  background-color: #dcdcdc;
-}
-
 
 .property-header {
   background-color: rgb(227,227,227);
@@ -2070,6 +1958,7 @@ a {
   color: #2388d0;
   border-bottom: 2px solid #2388d0;
 }
+
 #stops-panel{
   position: absolute;
   left: 555px;
@@ -2080,6 +1969,7 @@ a {
   font-family: Microsoft YaHei, Arial, Verdana, Helvetica, AppleGothic, sans-serif;
   color: #333;
 }
+
 #icon-select-panel,#font-select-panel{
   width: 300px;
   max-height: 450px;
@@ -2103,61 +1993,9 @@ a {
   border-radius: 0;
   border: none;
 }
+
 #icon-select-panel .meta-explain{
   display: none;
-}
-.meta-title{
-  padding: 5px 10px;
-  color: #717070;
-  background-color: #f3f3f3;
-  border-radius: 10px 10px 0 0;
-}
-.font-list{
-  display: block;
-  overflow: auto;
-  margin: 10px;
-  padding: 5px;
-  max-height: 340px;
-  background-color: #f5f5f5;
-  scrollbar-track-color:#f5f5f5;
-  scrollbar-face-color:#dcdcdc;
-}
-
-.font-list .font-family{
-  width: 100%;
-}
-
-.font-list .font-item{
-  width: calc(100% - 5px);
-  margin-left:5px;
-}
-
-.font-list .font-item:hover,.font-list .family-name:hover{
-  background-color: #ababab;
-  cursor:pointer;
-} 
-
-.font-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.font-list::-webkit-scrollbar:horizontal {
-  height: 6px;
-}
-
-/* 滚动条的滑轨背景颜色 */
-.font-list::-webkit-scrollbar-track {
-  background-color: #f5f5f5;
-}
-
-/* 滑块颜色 */
-.font-list::-webkit-scrollbar-thumb {
-  background-color: #dcdcdc;
-}
-
-.font-family i{
-  font-size: 18px;
-  vertical-align: middle;
 }
 
 .open-stops{
@@ -2179,6 +2017,7 @@ a {
   background-color: #1f78ba;
   color: white;
 }
+
 #layer-folder-dialog{
   display: none;
 }
@@ -2188,34 +2027,54 @@ a {
   overflow-x: hidden;
   overflow-y: auto;
 }
+
 .prop-group{
   background-color: #f5f5f5;
   margin: 10px;
   padding:5px;
 }
+
 .prop-group .text{
   padding: 5px;
   border-bottom: 1px solid #d5d5d5;
   font-weight: bold;
 }
+
 .prop-group .text span{
   color: #6f6f6f;
 }
-.prop-group::-webkit-scrollbar {
+
+#layer-control::-webkit-scrollbar,
+#property-panel::-webkit-scrollbar,
+#style-div::-webkit-scrollbar,
+#data-div::-webkit-scrollbar,
+.prop-group::-webkit-scrollbar{
   width: 6px;
 }
 
-.prop-group::-webkit-scrollbar:horizontal {
+#layer-control::-webkit-scrollbar:horizontal,
+#property-panel::-webkit-scrollbar:horizontal,
+#style-div::-webkit-scrollbar:horizontal,
+#data-div::-webkit-scrollbar:horizontal,
+.prop-group::-webkit-scrollbar:horizontal{
   height: 6px;
 }
 
 /* 滚动条的滑轨背景颜色 */
-.prop-group::-webkit-scrollbar-track {
+#layer-control::-webkit-scrollbar-track,
+#property-panel::-webkit-scrollbar-track,
+#style-div::-webkit-scrollbar-track,
+#data-div::-webkit-scrollbar-track,
+.prop-group::-webkit-scrollbar-track{
   background-color: #f5f5f5;
 }
 
 /* 滑块颜色 */
-.prop-group::-webkit-scrollbar-thumb {
+#layer-control::-webkit-scrollbar-thumb,
+#property-panel::-webkit-scrollbar-thumb,
+#style-div::-webkit-scrollbar-thumb,
+#data-div::-webkit-scrollbar-thumb,
+.prop-group::-webkit-scrollbar-thumb{
   background-color: #dcdcdc;
 }
 
