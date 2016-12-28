@@ -52,6 +52,7 @@ import MapStyleEditor from './components/mapeditor/MapStyleEditor.vue'
 import MapDistrictSelect from './components/mapeditor/MapDistrictSelect'
 import ModalStyleTemplate from './components/mapeditor/ModalStyleTemplate'
 import IconPanel from './components/mapeditor/IconPanel'
+import FontPanel from './components/mapeditor/FontPanel'
 import FilterData from './components/mapeditor/FilterDataPanel'
 import StopsPanel from './components/mapeditor/StopsPanel.vue'
 import TemplateWizard from './components/mapeditor/TemplateWizard.vue'
@@ -88,6 +89,7 @@ Vue.component('foxgis-dialog-prompt',DialogPrompt)
 Vue.component('foxgis-dialog-input',DialogInput)
 Vue.component('foxgis-dialog-single',DialogSingle)
 Vue.component('foxgis-icon-panel',IconPanel)
+Vue.component('foxgis-font-panel',FontPanel)
 Vue.component('foxgis-data-select',DataSelectPanel)
 Vue.component('foxgis-filter-data',FilterData)
 Vue.component('foxgis-svgeditor',SVGEditor)
