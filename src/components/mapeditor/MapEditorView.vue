@@ -55,7 +55,10 @@ export default {
     // 地图点击 弹出info
     mapClick: function(e){
       var infoContainer = document.getElementById('info-container');
-      var features = this.map.queryRenderedFeatures(e.point);
+      var clickBuffer = 2;
+      var southWest = {x:e.point.x-clickBuffer,y:e.point.y+clickBuffer};
+      var northEast = {x:e.point.x+clickBuffer,y:e.point.y-clickBuffer};
+      var features = this.map.queryRenderedFeatures([southWest,northEast]);
       this.querySourceLayers = {};
       var sourceLayers = {};
       if(features.length===0){

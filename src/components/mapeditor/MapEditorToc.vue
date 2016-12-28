@@ -84,6 +84,7 @@
                 <!-- 其他 -->
                 <div class="property-value" v-if="name.indexOf('color')==-1&&name.indexOf('opacity')==-1">
                   <input type="text" :value="value" v-on:change='propertyChange' name="{{name}}" data-type='paint' />
+                  <label class="label">{{units[name.replace(curPanelLayer.type+'-','')]}}</label>
                 </div>
                 <i class="material-icons open-stops" data-name="{{name}}" data-type="paint" v-on:click="openStopsPanel">timeline</i>
               </div>
@@ -102,6 +103,7 @@
                 <div class="property-value" v-if="name!=='text-anchor'&&name!=='text-allow-overlap'&&name!=='text-ignore-placement'&&name!=='text-field'">
                   <input type="text" :value="value" name="{{name}}" v-if="name==='text-font'" v-on:change='propertyChange' v-on:click='onShowFontPanel' data-type='layout'/>
                   <input type="text" :value="value" name="{{name}}" v-else v-on:change='propertyChange' data-type='layout'/>
+                  <label class="label">{{units[name.replace(curPanelLayer.type+'-','')]}}</label>
                 </div>
                 <div class="property-value" v-if="name=='text-anchor'">
                   <select v-model="value" v-on:change='propertyChange' name="{{name}}" data-type='layout'>
@@ -137,6 +139,7 @@
                 <!-- 其他-->
                 <div class="property-value" v-if="name.indexOf('color')==-1&&name.indexOf('opacity')==-1">
                   <input type="text" :value="value" v-on:change='propertyChange' name="{{name}}" data-type='paint' />
+                  <label class="label">{{units[name.replace(curPanelLayer.type+'-','')]}}</label>
                 </div>
                 <!-- 颜色-->
                 <div class="property-value" v-if="name.indexOf('color')!=-1">
@@ -152,6 +155,7 @@
                 <div class="property-value" v-if="name.indexOf('color')==-1&&name!=='icon-allow-overlap'&&name!=='icon-ignore-placement'">
                   <input type="text" :value="value" name="{{name}}" v-if="name==='icon-image'" v-on:change='propertyChange' v-on:click='onShowIconPanel' data-type='layout'/>
                   <input type="text" :value="value" name="{{name}}" v-else v-on:change='propertyChange' data-type='layout'/>
+                  <label class="label">{{units[name.replace(curPanelLayer.type+'-','')]}}</label>
                 </div>
                 <div class="property-value" v-if="name=='icon-allow-overlap'||name=='icon-ignore-placement'">
                   <mdl-switch :checked.sync="true" v-if="value==true" v-on:change='propertyChange' data-name="{{name}}" data-type='layout' ></mdl-switch>
@@ -166,8 +170,10 @@
             <div class="paint-property prop-group">
               <div v-for="(name,value) in propertyGroup.symbol" class="property-item">
                 <div class="property-name"><span >{{translate[name.replace(curPanelLayer.type+'-','')]}}</span></div>
-                <div class="property-value" v-if="name!=='symbol-placement'&&name!=='symbol-avoid-edges'&&name!=='visibility'">
-                  <input type="text" :value="value" name="{{name}}" v-on:change='propertyChange' data-type='layout'/>
+                <div class="property-value" v-if="name==='symbol-spacing'">
+                  <input type="text" :value="value" v-on:change='propertyChange' v-if="curPanelLayer.layout['symbol-placement']=='point'" disabled name="{{name}}" data-type='layout'/>
+                  <input type="text" :value="value" name="{{name}}" v-on:change='propertyChange' data-type='layout' v-else/>
+                  <label class="label">{{units[name.replace(curPanelLayer.type+'-','')]}}</label>
                 </div>
                 <div class="property-value" v-if="name=='symbol-avoid-edges'">
                   <mdl-switch :checked.sync="true" v-if="value==true" v-on:change='propertyChange' data-name="{{name}}" data-type='layout' ></mdl-switch>
@@ -196,6 +202,7 @@
               <div class="property-value" v-if="name.indexOf('antialias')===-1&&name.indexOf('translate-anchor')===-1&&name.indexOf('opacity')===-1&&name.indexOf('color')===-1">
                 <input type="text" :value="value" name="{{name}}" v-if="name.indexOf('pattern')!==-1" v-on:change='propertyChange' v-on:click='onShowIconPanel' data-type='paint'/>
                 <input type="text" :value="value" v-else v-on:change='propertyChange' name="{{name}}" data-type='paint' />
+                <label class="label">{{units[name.replace(curPanelLayer.type+'-','')]}}</label>
               </div>
               <!-- 颜色 -->
               <div class="property-value" v-if="name.indexOf('color')!==-1">
@@ -228,6 +235,7 @@
               <!-- input -->
               <div class="property-value" v-if="name!=='line-miter-limit'&&name!=='line-round-limit'&&name!=='line-cap'&&name!=='line-join'&&name!=='visibility'">
                 <input type="text" :value="value" v-on:change='propertyChange' name="{{name}}" data-type='layout' />
+                <label class="label">{{units[name.replace(curPanelLayer.type+'-','')]}}</label>
               </div>
               <!-- line-cap -->
               <div class="property-value" v-if="name=='line-cap'">
@@ -731,7 +739,57 @@ export default {
     propertyChange:function(e){
       var currentLayer = this.currentLayer;
       var layers = this.styleObj.layers;
-      var targetDom = e.target;
+      var type,name,value;
+      if(e.target.type === 'checkbox'){
+        type = e.target.parentElement.dataset.type;
+        name = e.target.parentElement.dataset.name;
+      }else{
+        type = e.target.dataset.type;
+        name = e.target.name;
+      }
+      var opt = {};
+      if(styleProperty.getValueByName[name]){
+        opt = styleProperty.getValueByName[name](e);
+      }else if(name.indexOf('icon-')!==-1){
+        opt = styleProperty.getValueByName[name.replace('icon-','')](e);
+      }else if(name.indexOf('text-')!==-1){
+        opt = styleProperty.getValueByName[name.replace('text-','')](e);
+      }else {
+        opt = styleProperty.getValueByName[name.replace(currentLayer.type+'-','')](e);
+      }
+      if(opt.error){
+        this.$broadcast("mailSent",{message:opt.error,timeout:3000});
+        return;
+      }
+      if(!currentLayer.hasOwnProperty(type)){
+        currentLayer[type] = {};
+      }
+      currentLayer[type][name] = opt.value;
+
+      /*if(name === 'line-join'){
+        var inputDomR = document.querySelector("input[name='line-round-limit']");
+        var inputDomM = document.querySelector("input[name='line-miter-limit']");
+        if(value === 'miter'){
+          inputDomR.disabled = 'disabled';
+          inputDomM.removeAttribute('disabled');
+        }else if(value === 'round'){
+          inputDomM.disabled = 'disabled';
+          inputDomR.removeAttribute('disabled');
+        }else {
+          inputDomR.disabled = 'disabled';
+          inputDomM.disabled = 'disabled';
+        }
+      }*/
+
+      /*if(name === 'symbol-placement'){
+        var spaceDom = document.querySelector("input[name='symbol-spacing']");
+        if(value === 'point'){
+          spaceDom.disabled = 'disabled';
+        }else{
+          spaceDom.removeAttribute('disabled');
+        }
+      }*/
+      /*var targetDom = e.target;
       var value;
 
       if(targetDom.tagName === 'SELECT'){
@@ -749,7 +807,7 @@ export default {
       if(!isNaN(temp)){//number
         value = temp;
       }else if(typeof value === 'string'){
-        if(value.indexOf(',')!=-1&&targetDom.name!=="text-font"&&value.indexOf("rgb")===-1){//数组（dasharray或offset）
+        if(value.indexOf(',')!=-1&&targetDom.name!=="text-font"&&value.indexOf("rgb")===-1&&value.indexOf("hsl")===-1){//数组（dasharray或offset）
           value = value.split(',');
           for(let i=0,length=value.length;i<length;i++){
             value[i] = Number(value[i]);
@@ -800,7 +858,7 @@ export default {
           inputDomR.disabled = 'disabled';
           inputDomM.disabled = 'disabled';
         }
-      }
+      }*/
 
       var data = JSON.parse(JSON.stringify(this.styleObj));
       this.changeStyle(data);
@@ -1554,6 +1612,7 @@ export default {
     this.defaultStyle = styleProperty.defaultStyle;
     this.translate = styleProperty.translate;
     this.defaultProperty = styleProperty.defaultProperty;
+    this.units = styleProperty.units;
   },
   data: function() {
     return {
@@ -1599,7 +1658,8 @@ export default {
       propertyGroup:{},
       defaultStyle:{},
       translate:{},
-      defaultProperty:{}
+      defaultProperty:{},
+      units:{}
     }
   },
   watch: {
@@ -1973,6 +2033,14 @@ a {
 .property-value .mdl-switch{
   width: initial;
   margin-left: 50px;
+}
+.property-value .label{
+  position: absolute;
+  color: #b5b5b5;
+  font-size: 12px;
+  padding: 2px 5px 5px 5px;
+  right: 0;
+  top: 3px;
 }
 #property-panel .property-name span{
   color: #999999;

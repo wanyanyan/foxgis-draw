@@ -167,7 +167,16 @@ export default {
         }, function(response) {
           this.$broadcast('mailSent', { message: '删除失败！',timeout:3000 });
         });
-        this.deleteUploadId = "";//重置deleteUploadId
+        //隐藏所有active的card
+        var activeCards = this.$el.querySelector('.active');
+        var icons=this.$el.querySelector('.isOpen');
+        if(activeCards){
+          activeCards.className = activeCards.className.replace(' active','');
+          icons.className = icons.className.replace(' isOpen','');
+          icons.innerText = 'add_circle_outline';
+        }
+        //重置deleteUploadId
+        this.deleteUploadId = "";
       }
     }
   },
