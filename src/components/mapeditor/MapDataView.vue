@@ -22,7 +22,7 @@
 </template>
 
 <script>
-/*import mapboxgl from 'mapbox-gl'*/
+import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js'
 import { diff, validate} from 'mapbox-gl-style-spec'
 import Cookies from 'js-cookie'
 export default {

@@ -2,6 +2,7 @@ require('material-design-lite/material.min.js')
 require('material-design-lite/material.min.css')
 require('material-design-icons/iconfont/material-icons.css')
 require('gl-draw-foxgis/dist/gl-draw-foxgis.css')
+require('mapbox-gl/dist/mapbox-gl.css')
 
 
 import Vue from 'vue'

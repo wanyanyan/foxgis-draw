@@ -193,6 +193,7 @@
             </div>
           </div>
         </div>
+        <!-- 非点状符号 -->
         <div v-else>
           <!-- 绘图属性 -->
           <div class="paint-property prop-group">

@@ -209,6 +209,7 @@
 
 
 <script>
+import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js'
 import Cookies from 'js-cookie'
 import echarts from 'echarts'
 export default {
