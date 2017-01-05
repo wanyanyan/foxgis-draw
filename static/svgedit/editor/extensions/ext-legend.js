@@ -7,7 +7,7 @@
  
 /* 
  *	@创建者：万炎炎
- *	@主要功能：添加比例尺按钮及相关函数
+ *	@主要功能：添加图例按钮及相关函数
  */
 
 svgEditor.addExtension('ext-legend', function() {
@@ -86,6 +86,11 @@ svgEditor.addExtension('ext-legend', function() {
 			if(legendArr[i].type === "symbol"){
 				var iconUrl = prefix+legendArr[i].styles[0]['icon-image']+"?access_token="+options.access_token;
 				var res = $.ajax({url:iconUrl,async:false});
+				if(res.statusText!=="OK"){
+					legendArr.splice(i,1);
+					i = i-1;
+					continue;
+				}
 				var svgStr = res.responseText;
 				var newDoc = $.parseXML(svgStr);
 				// set new svg document

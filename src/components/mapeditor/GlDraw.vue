@@ -133,6 +133,7 @@
 
 
 <script>
+import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js'
 import Cookies from 'js-cookie'
 import { changeStyle } from '../../vuex/actions'
 export default {

@@ -92,6 +92,7 @@ TODOS
 				'ext-connector.js',
 				'ext-compass.js',
 				'ext-legend.js',
+				'ext-scale.js',
 				'ext-panning.js'
 			],
 			defaultConfig = {
