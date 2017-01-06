@@ -1,7 +1,7 @@
 /*globals svgEditor, svgCanvas*/
 /*jslint eqeq: true*/
 /*
- * ext-legend.js
+ * ext-scale.js
  *
  */
  

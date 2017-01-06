@@ -409,7 +409,7 @@ div.palette_item:first-child {
 	display: block;
 	z-index: 2;
 	padding-left: 15px;
-	line-height: 26px;
+	line-height: 22px;
 	color: rgb(146,146,146);
 	font-family: "Microsoft YaHei" ! important;
 }

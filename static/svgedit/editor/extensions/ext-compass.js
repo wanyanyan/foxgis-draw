@@ -72,7 +72,7 @@ svgEditor.addExtension('compass', function() {'use strict';
 			var path_d = data[id];
 			var icon = svg_elem.clone();
 			icon.find('path').attr('d', path_d);
-
+			icon.find('path').attr('fill', "#18517e");
 			var icon_btn = icon.wrap('<div class="tool_button">').parent().attr({
 				id: mode_id + '_' + id,
 				title: id

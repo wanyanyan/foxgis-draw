@@ -32,7 +32,7 @@ svgEditor.addExtension("Connector", function(S) {
 		
 	var lang_list = {
 		"en":[
-			{"id": "mode_connect", "title": "Connect two objects" }
+			{"id": "mode_connect", "title": "连接两个要素" }
 		],
 		"fr":[
 			{"id": "mode_connect", "title": "Connecter deux objets"}
@@ -308,7 +308,7 @@ svgEditor.addExtension("Connector", function(S) {
 			id: "mode_connect",
 			type: "mode",
 			icon: svgEditor.curConfig.imgPath + "cut.png",
-			title: "Connect two objects",
+			title: "连接两个要素",
 			includeWith: {
 				button: '#tool_line',
 				isDefault: false,

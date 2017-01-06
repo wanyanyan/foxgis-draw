@@ -19,10 +19,10 @@
     </div>
     <nav class="mdl-navigation" id="main-control">
       <img class="mdl-layout-icon" src="../assets/logo.png"></img>
-      <a class="mdl-navigation__link control-active" v-on:click.stop.prevent="layerControlClick" title="样式配置"><i class="material-icons">map</i></a>
+      <a class="mdl-navigation__link control-active" v-on:click.stop.prevent="layerControlClick" title="样式配置"><i class="material-icons">build</i></a>
       <a class="mdl-navigation__link" v-on:click.stop.prevent="districtControlClick" title="行政区划"><i class="material-icons">extension</i></a>
-      <a class="mdl-navigation__link" v-on:click.prevent="styleEditorClick" title="样式源码"><i class="material-icons">build</i></a>
-      <a class="mdl-navigation__link" id="svgeditor-open" v-on:click.prevent="SVGEditorClick" title="打开SVG编辑器"><i class="material-icons">place</i></a>
+      <a class="mdl-navigation__link" v-on:click.prevent="styleEditorClick" title="样式源码"><i class="material-icons">code</i></a>
+      <a class="mdl-navigation__link" id="svgeditor-open" v-on:click.prevent="SVGEditorClick" title="打开SVG编辑器"><i class="material-icons">open_with</i></a>
       <a class="back btm" v-on:click.prevent="backToProject" title="返回工程列表"><i class="material-icons">reply</i></br>返回</a>
       <a class="save-style btm" v-on:click.prevent="styleSaveClick" title="保存样式"><i class="material-icons">save</i></br>保存</a>
     </nav>
@@ -82,7 +82,7 @@ export default {
       e.currentTarget.className += ' control-active';
       var active = document.getElementsByClassName("control-active");
       if(active.length === 2){
-        if(active[1].textContent === "build"){
+        if(active[1].textContent === "code"){
           active[0].className = active[0].className.replace(' control-active','');
         }else{
           active[1].className = active[1].className.replace(' control-active','');
