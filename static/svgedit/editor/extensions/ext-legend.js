@@ -225,6 +225,12 @@ svgEditor.addExtension('ext-legend', function() {
  	* @返回值 {Object} layer 图例的一个样式图层
  	*/
 	function getLegendLayer(type,styleLayer){//获取图例的渲染样式层
+		if(!styleLayer.paint){
+			styleLayer.paint={};
+		}
+		if(!styleLayer.layout){
+			styleLayer.layout={};
+		}
     if(type==="line"){//线
       var layer = [{
         "line-opacity":getCurrentValue({type:'exponential',value:styleLayer.paint["line-opacity"]})||1,
