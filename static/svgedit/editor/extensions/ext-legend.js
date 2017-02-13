@@ -190,13 +190,16 @@ svgEditor.addExtension('ext-legend', function() {
 		var lineLayers=[];
 		var polygonLayers=[];
 		for(var i=0;i<layers.length;i++){//遍历样式集，按点线面分成三类
-		    if(layers[i].type==="symbol"){
-		        pointLayers.push(layers[i]);
-		    }else if(layers[i].type==="line"){
-		        lineLayers.push(layers[i]);
-		    }else if(layers[i].type==="fill"){
-		        polygonLayers.push(layers[i]);
-		    }
+			if(layers[i].source === "mapbox-gl-draw-cold"||layers[i].source === "mapbox-gl-draw-hot"){
+					continue;
+			}
+		  if(layers[i].type==="symbol"){
+		    pointLayers.push(layers[i]);
+		  }else if(layers[i].type==="line"){
+		    lineLayers.push(layers[i]);
+		  }else if(layers[i].type==="fill"){
+		    polygonLayers.push(layers[i]);
+		  }
 		}
 		var pointLegend = filterLegend("symbol",pointLayers);
 		var lineLegend = filterLegend("line",lineLayers);
