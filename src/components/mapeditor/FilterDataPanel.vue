@@ -127,6 +127,7 @@
 <script>
 import Cookies from 'js-cookie'
 import _ from 'lodash'
+import util from '../util.js'
 import { changeStyle } from '../../vuex/actions'
 export default {
   vuex: {
@@ -412,7 +413,7 @@ export default {
     },
     getSystemSources:function(){
       var access_token = Cookies.get('access_token');
-      var systemSourceIds = ["admin2","gw_admin"];//暂时不加admin
+      var systemSourceIds = util.systemSourceIds;//暂时不加admin
       for(let i = 0;i<systemSourceIds.length;i++){
         var url = SERVER_API.tilesets+"/geoway/"+systemSourceIds[i];
         this.getSource(systemSourceIds[i],url);

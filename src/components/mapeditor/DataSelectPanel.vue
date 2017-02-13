@@ -38,7 +38,7 @@
           <div class="source-header">
             <i class="material-icons">layers</i>
             <b>{{source.name}}</b>
-            <span v-if="source.id==='admin2'||source.id==='admin'||source.id==='gw_admin'">系统数据</span>
+            <span v-if="systemSourceIds.indexOf(source.id)!==-1">系统数据</span>
             <span v-else>{{source.owner}} · {{source.createdAt}}</span>
           </div>
           <div class="source-detail">
@@ -63,7 +63,7 @@
           <div class="source-header">
             <i class="material-icons">layers</i>
             <b>{{source.name}}</b>
-            <span v-if="source.id==='admin2'||source.id==='admin'||source.id==='gw_admin'">系统数据</span>
+            <span v-if="systemSourceIds.indexOf(source.id)!==-1">系统数据</span>
             <span v-else>{{source.owner}} · {{source.createdAt}}</span>
           </div>
           <div class="source-detail">
@@ -87,7 +87,7 @@
 <script>
 import Cookies from 'js-cookie'
 import commonMethod from '../../components/method.js'
-import util from '../../components/util.js'
+import util from '../util.js'
 export default {
   props:['sources'],
   methods: {
